@@ -1,4 +1,4 @@
-package com.example.mobapp;
+package com.stackbase.mobapp;
 
 import java.util.Timer;
 import java.util.TimerTask;

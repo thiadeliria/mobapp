@@ -1,4 +1,4 @@
-package com.example.mobapp;
+package com.stackbase.mobapp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

@@ -1,4 +1,4 @@
-package com.example.mobapp;
+package com.stackbase.mobapp;
 
 import android.app.Activity;
 import android.os.Bundle;
