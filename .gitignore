@@ -1,2 +1,5 @@
+.gradle/**
+app/build/**
 .DS_Store
 local.properties
+
