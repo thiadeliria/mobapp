@@ -1,0 +1,4 @@
+/Users/mabo/source/android/mobapp/app/build/intermediates/classes/debug
+/Users/mabo/source/android/mobapp/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-0702a3b82504c89706c36809898811a5eabbcfd3.jar
+/Users/mabo/source/android/mobapp/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-6ec4e6b22ef781ae04eb37bf3c07d2b436b74a12.jar
+/Users/mabo/source/android/mobapp/app/build/intermediates/pre-dexed/debug/classes-3e8d8d38a4b3e6b15ed5a31f99d7f9d94217feaf.jar
