@@ -10,7 +10,7 @@ public class FragmentIDCard extends Fragment {
 	View content;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		content = inflater.inflate(R.layout.frag_idcard, null);
+		content = inflater.inflate(R.layout.fragment_idcard, null);
 		//initView();
 
 		return content;
