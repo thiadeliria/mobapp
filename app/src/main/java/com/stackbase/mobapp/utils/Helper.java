@@ -7,8 +7,14 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 /**
  * Created by gengjh on 1/17/15.
@@ -91,20 +97,10 @@ abstract public class Helper {
         return null;
     }
 
-    public interface ErrorCallback {
-        /**
-         * Called when hint error
-         *
-         * @param title,   error title
-         * @param message, error message
-         */
-        void onErrorTaken(String title, String message);
-    }
-
     public static String getMD5String(String source) {
         String result = source;
-        char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                'a', 'b', 'c', 'd', 'e', 'f' };
+        char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'a', 'b', 'c', 'd', 'e', 'f'};
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(source.getBytes());
@@ -125,5 +121,85 @@ abstract public class Helper {
         return result;
     }
 
-//    public static
+    public static byte[] readFile(File file) throws IOException {
+        // Open file
+        RandomAccessFile f = new RandomAccessFile(file, "r");
+        try {
+            // Get and check length
+            long longlength = f.length();
+            int length = (int) longlength;
+            if (length != longlength)
+                throw new IOException("File size >= 2 GB");
+            // Read file and return data
+            byte[] data = new byte[length];
+            f.readFully(data);
+            return data;
+        } finally {
+            f.close();
+        }
+    }
+
+    public static boolean isValidMD5(String s) {
+        return s.matches("[a-fA-F0-9]{32}");
+    }
+
+    public static String findMd5fromPath(File file) {
+        String parent = file.getParent();
+        String strs[] = parent.split("/");
+        String result = "com.stackbase.mobapp"; // default password
+        for (int i = strs.length - 1; i >= 0; i--) {
+            if (Helper.isValidMD5(strs[i])) {
+                result = strs[i];
+                break;
+            }
+        }
+        return result;
+    }
+
+    public static byte[] generateKey(String password) throws Exception {
+        byte[] keyStart = password.getBytes("UTF-8");
+
+        KeyGenerator kgen = KeyGenerator.getInstance("AES");
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
+        sr.setSeed(keyStart);
+        kgen.init(128, sr);
+        SecretKey skey = kgen.generateKey();
+        return skey.getEncoded();
+    }
+
+    public static byte[] encodeFile(byte[] key, byte[] fileData) throws Exception {
+        byte[] encrypted = new byte[key.length + fileData.length + key.length];
+        System.arraycopy(key, 0, encrypted, 0, key.length);
+        System.arraycopy(fileData, 0, encrypted, key.length, fileData.length);
+        System.arraycopy(key, 0, encrypted, key.length + fileData.length, key.length);
+//        SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+//        Cipher cipher = Cipher.getInstance("AES");
+//        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+//
+//        byte[] encrypted = cipher.doFinal(fileData);
+
+        return encrypted;
+    }
+
+    public static byte[] decodeFile(byte[] key, byte[] fileData) throws Exception {
+        byte decrypted[] = new byte[fileData.length - key.length * 2];
+        System.arraycopy(fileData, key.length, decrypted, 0, decrypted.length);
+//        SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+//        Cipher cipher = Cipher.getInstance("AES");
+//        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+//
+//        byte[] decrypted = cipher.doFinal(fileData);
+
+        return decrypted;
+    }
+
+    public interface ErrorCallback {
+        /**
+         * Called when hint error
+         *
+         * @param title,   error title
+         * @param message, error message
+         */
+        void onErrorTaken(String title, String message);
+    }
 }

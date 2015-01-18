@@ -122,7 +122,17 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(pictureFile);
-            fos.write(data);
+
+            // encrypt file
+            // get the md5 string from path as the password
+            String key = Helper.findMd5fromPath(pictureFile);
+            try {
+                byte[] encodedData = Helper.encodeFile(Helper.generateKey(key), data);
+                fos.write(encodedData);
+            } catch (Exception ex) {
+                Log.d(TAG, "Fail to encode data!!");
+                fos.write(data);
+            }
             fos.close();
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());

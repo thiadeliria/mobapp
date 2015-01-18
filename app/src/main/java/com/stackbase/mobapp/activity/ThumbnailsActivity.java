@@ -6,7 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +17,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import android.media.ThumbnailUtils;
 
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.utils.Constant;
+import com.stackbase.mobapp.utils.Helper;
 import com.stackbase.mobapp.view.GridViewAdapter;
 import com.stackbase.mobapp.view.ImageItem;
 
@@ -31,6 +34,7 @@ public class ThumbnailsActivity extends Activity {
     private GridView gridView;
     private GridViewAdapter customGridAdapter;
     private ImageButton takepictureBtn;
+    private static final String TAG = ThumbnailsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +97,8 @@ public class ThumbnailsActivity extends Activity {
             gridView.setAdapter(customGridAdapter);
         }
     }
-        @Override
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_thumbnails, menu);
@@ -131,13 +136,19 @@ public class ThumbnailsActivity extends Activity {
             }
         });
         for (int i = 0; i < pictures.length; i++) {
-            Bitmap bitmap = getRotateBitmap(pictures[i].getAbsolutePath());
-            if (bitmap == null) {
-                BitmapFactory.decodeFile(pictures[i].getAbsolutePath());
+            // decrypt file
+            // get the md5 string from path as the password
+            String key = Helper.findMd5fromPath(pictures[i]);
+            try {
+                byte[] data = Helper.readFile(pictures[i]);
+                byte[] decodedData = Helper.decodeFile(Helper.generateKey(key), data);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(decodedData, 0, decodedData.length);
+                imageItems.add(new ImageItem(ThumbnailUtils.extractThumbnail(bitmap, 40, 60,
+                        ThumbnailUtils.OPTIONS_RECYCLE_INPUT),
+                        "Image#" + i, pictures[i].getAbsolutePath()));
+            } catch (Exception ex) {
+                Log.d(TAG, "Fail to load File: " + ex.getMessage());
             }
-            imageItems.add(new ImageItem(ThumbnailUtils.extractThumbnail(bitmap, 40, 60,
-                    ThumbnailUtils.OPTIONS_RECYCLE_INPUT),
-                    "Image#" + i, pictures[i].getAbsolutePath()));
         }
 
         return imageItems;
