@@ -136,12 +136,8 @@ public class ThumbnailsActivity extends Activity {
             }
         });
         for (int i = 0; i < pictures.length; i++) {
-            // decrypt file
-            // get the md5 string from path as the password
-            String key = Helper.findMd5fromPath(pictures[i]);
             try {
-                byte[] data = Helper.readFile(pictures[i]);
-                byte[] decodedData = Helper.decodeFile(Helper.generateKey(key), data);
+                byte[] decodedData = Helper.loadFile(pictures[i].getAbsolutePath());
                 Bitmap bitmap = BitmapFactory.decodeByteArray(decodedData, 0, decodedData.length);
                 imageItems.add(new ImageItem(ThumbnailUtils.extractThumbnail(bitmap, 40, 60,
                         ThumbnailUtils.OPTIONS_RECYCLE_INPUT),

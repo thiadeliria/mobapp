@@ -3,10 +3,17 @@ package com.stackbase.mobapp.utils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.util.Log;
 
+import com.stackbase.mobapp.view.ImageItem;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.security.MessageDigest;
@@ -201,5 +208,64 @@ abstract public class Helper {
          * @param message, error message
          */
         void onErrorTaken(String title, String message);
+    }
+
+    /**
+     * save file and encode the content
+     * @param fileFullName file name include the path info
+     * @param data content for the file
+     * @return
+     */
+    public static boolean saveFile(String fileFullName, byte[] data) {
+        File file = new File(fileFullName);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        FileOutputStream fos = null;
+        boolean result = false;
+        try {
+            fos = new FileOutputStream(file);
+            String key = Helper.findMd5fromPath(file);
+            try {
+                byte[] encodedData = Helper.encodeFile(Helper.generateKey(key), data);
+                fos.write(encodedData);
+            } catch (Exception ex) {
+                Log.d(TAG, "Fail to encode data!!");
+                fos.write(data);
+            }
+            fos.close();
+            result = true;
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Load file and decrypt the content
+     * @param fileFullName file name include the path info
+     * @return
+     */
+    public static byte[] loadFile(String fileFullName) {
+        File file = new File(fileFullName);
+        String key = Helper.findMd5fromPath(file);
+        byte[] result = null;
+        try {
+            byte[] data = Helper.readFile(file);
+            result = Helper.decodeFile(Helper.generateKey(key), data);
+        } catch (Exception ex) {
+            Log.d(TAG, "Fail to load File: " + ex.getMessage());
+        }
+        return result;
     }
 }

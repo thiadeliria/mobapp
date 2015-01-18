@@ -200,7 +200,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPostalAddress"
             android:ems="20"
-            android:id="@+id/editText"
+            android:id="@+id/validityDateFrom"
             android:layout_row="4"
             android:layout_column="1"
             android:layout_columnSpan="6" />

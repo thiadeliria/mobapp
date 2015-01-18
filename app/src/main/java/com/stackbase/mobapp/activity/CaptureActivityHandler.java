@@ -119,34 +119,7 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
             Log.d(TAG, "Error creating media file, check storage permissions!!");
             return;
         }
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(pictureFile);
-
-            // encrypt file
-            // get the md5 string from path as the password
-            String key = Helper.findMd5fromPath(pictureFile);
-            try {
-                byte[] encodedData = Helper.encodeFile(Helper.generateKey(key), data);
-                fos.write(encodedData);
-            } catch (Exception ex) {
-                Log.d(TAG, "Fail to encode data!!");
-                fos.write(data);
-            }
-            fos.close();
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
-        } catch (IOException e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        Helper.saveFile(pictureFile.getAbsolutePath(), data);
     }
 
     private File getOutputMediaFile(){

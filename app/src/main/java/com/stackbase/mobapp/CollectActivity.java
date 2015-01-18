@@ -5,17 +5,33 @@ import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CollectActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -23,6 +39,9 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
     Fragment idCard, otherInfo;
     ActionBar actionBar;
     ViewPager vp;
+    private SharedPreferences prefs;
+    private String TAG = CollectActivity.class.getSimpleName();
+
     FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
         @Override
         public Fragment getItem(int position) {
@@ -35,8 +54,14 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
             return frags.size();
         }
     };
-    private TextView nameText;
-    private TextView idText;
+    private EditText nameText;
+    private EditText idText;
+    private RadioButton maleButton;
+    private EditText nationText;
+    private EditText birthdayText;
+    private EditText addressText;
+    private EditText issueText;
+    private EditText validityDateFromText;
 
     private boolean invalidInputs = false;
 
@@ -119,19 +144,80 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
 
     private boolean validateIdCardInputs() {
         if (idText == null) {
-            idText = (TextView) idCard.getView().findViewById(R.id.idText);
+            idText = (EditText) idCard.getView().findViewById(R.id.idText);
         }
         if (nameText == null) {
-            nameText = (TextView) idCard.getView().findViewById(R.id.nameText);
+            nameText = (EditText) idCard.getView().findViewById(R.id.nameText);
+        }
+        if (maleButton == null) {
+            maleButton = (RadioButton) idCard.getView().findViewById(R.id.maleButton);
+        }
+        if (nationText == null) {
+            nationText = (EditText) idCard.getView().findViewById(R.id.nationText);
+        }
+        if (birthdayText == null) {
+            birthdayText = (EditText) idCard.getView().findViewById(R.id.birthdayText);
+        }
+        if (addressText == null) {
+            addressText = (EditText) idCard.getView().findViewById(R.id.addressText);
+        }
+        if (issueText == null) {
+            issueText = (EditText) idCard.getView().findViewById(R.id.issueText);
+        }
+        if (validityDateFromText == null) {
+            validityDateFromText = (EditText) idCard.getView().findViewById(R.id.validityDateFrom);
         }
         String id = "";
         String name = "";
+        String sex = "";
+        String nation = "";
+        Date birthday = null;
+        String address = "";
+        String issue = "";
+        Date validityDateFrom = null;
+//        Date validityDateTo = null;
         if (idText != null) {
             id = idText.getText().toString();
         }
         if (nameText != null) {
             name = nameText.getText().toString();
         }
+        if (maleButton != null && maleButton.isSelected()) {
+            sex = "男";
+        } else {
+            sex = "女";
+        }
+        if (nationText != null) {
+            nation = nationText.getText().toString();
+        }
+        if (birthdayText != null) {
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                birthday = dateFormat.parse(birthdayText.getText().toString());
+            } catch (ParseException pe) {
+                Log.d(TAG, "unexpected date format: " + birthdayText.getText().toString()
+                        + " , should be 'yyyy/MM/dd'");
+                //TODO: need should error message here
+            }
+        }
+        if (addressText != null) {
+            address = addressText.getText().toString();
+        }
+        if (issueText != null) {
+            issue = issueText.getText().toString();
+        }
+        if (validityDateFromText != null) {
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                validityDateFrom = dateFormat.parse(validityDateFromText.getText().toString());
+            } catch (ParseException pe) {
+                Log.d(TAG, "unexpected date format: " + validityDateFromText.getText().toString()
+                        + " , should be 'yyyy/MM/dd'");
+                //TODO: need should error message here
+            }
+        }
+
+
         if (id.equals("") || name.equals("")) {
             DialogInterface.OnClickListener alertListener = new DialogInterface.OnClickListener() {
                 @Override
@@ -145,10 +231,34 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
                     null, alertListener);
             return true;
         } else {
+            Borrower borrower = new Borrower();
+            borrower.setId(id);
+            borrower.setName(name);
+            borrower.setSex(sex);
+            borrower.setNation(nation);
+            borrower.setBirthday(birthday);
+            borrower.setAddress(address);
+            borrower.setValidityDateFrom(validityDateFrom);
+            borrower.setValidityDateTo(validityDateFrom); //TODO need validatyDateTo
             getIntent().putExtra(Constant.INTENT_KEY_ID, id);
             getIntent().putExtra(Constant.INTENT_KEY_NAME, name);
+            saveIDInfo(borrower);
             return false;
         }
+    }
 
+    private boolean saveIDInfo(Borrower borrower) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String rootDir = prefs.getString(PreferencesActivity.KEY_STORAGE_DIR,
+                Constant.DEFAULT_STORAGE_DIR);
+        String subfolder = Helper.getMD5String(borrower.getName() + borrower.getId());
+        String idFile = rootDir + File.separator + subfolder + File.separator + "id.json";
+        boolean result = false;
+        try {
+            result = Helper.saveFile(idFile, borrower.toJson().toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            Log.d(TAG, "Fail to save id file " + ex.getMessage());
+        }
+        return result;
     }
 }
