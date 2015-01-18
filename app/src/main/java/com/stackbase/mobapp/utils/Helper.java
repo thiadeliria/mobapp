@@ -3,13 +3,8 @@ package com.stackbase.mobapp.utils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.util.Log;
-
-import com.stackbase.mobapp.view.ImageItem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,8 +15,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by gengjh on 1/17/15.
@@ -152,7 +149,7 @@ abstract public class Helper {
 
     public static String findMd5fromPath(File file) {
         String parent = file.getParent();
-        String strs[] = parent.split("/");
+        String strs[] = parent.split(File.separator);
         String result = "com.stackbase.mobapp"; // default password
         for (int i = strs.length - 1; i >= 0; i--) {
             if (Helper.isValidMD5(strs[i])) {
@@ -174,46 +171,43 @@ abstract public class Helper {
         return skey.getEncoded();
     }
 
-    public static byte[] encodeFile(byte[] key, byte[] fileData) throws Exception {
-        byte[] encrypted = new byte[key.length + fileData.length + key.length];
-        System.arraycopy(key, 0, encrypted, 0, key.length);
-        System.arraycopy(fileData, 0, encrypted, key.length, fileData.length);
-        System.arraycopy(key, 0, encrypted, key.length + fileData.length, key.length);
-//        SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-//        Cipher cipher = Cipher.getInstance("AES");
-//        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-//
-//        byte[] encrypted = cipher.doFinal(fileData);
+    public static byte[] encodeFile(byte[] key, byte[] fileData, boolean isPlainText) throws Exception {
+        byte[] encrypted;
+        if (!isPlainText) {
+            encrypted = new byte[key.length + fileData.length + key.length];
+            System.arraycopy(key, 0, encrypted, 0, key.length);
+            System.arraycopy(fileData, 0, encrypted, key.length, fileData.length);
+            System.arraycopy(key, 0, encrypted, key.length + fileData.length, key.length);
+        } else {
+            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 
+            encrypted = cipher.doFinal(fileData);
+        }
         return encrypted;
     }
 
-    public static byte[] decodeFile(byte[] key, byte[] fileData) throws Exception {
-        byte decrypted[] = new byte[fileData.length - key.length * 2];
-        System.arraycopy(fileData, key.length, decrypted, 0, decrypted.length);
-//        SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-//        Cipher cipher = Cipher.getInstance("AES");
-//        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-//
-//        byte[] decrypted = cipher.doFinal(fileData);
+    public static byte[] decodeFile(byte[] key, byte[] fileData, boolean isPlainText) throws Exception {
+        byte[] decrypted;
+        if (!isPlainText) {
+            decrypted = new byte[fileData.length - key.length * 2];
+            System.arraycopy(fileData, key.length, decrypted, 0, decrypted.length);
+        } else {
+            SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
 
+            decrypted = cipher.doFinal(fileData);
+        }
         return decrypted;
-    }
-
-    public interface ErrorCallback {
-        /**
-         * Called when hint error
-         *
-         * @param title,   error title
-         * @param message, error message
-         */
-        void onErrorTaken(String title, String message);
     }
 
     /**
      * save file and encode the content
+     *
      * @param fileFullName file name include the path info
-     * @param data content for the file
+     * @param data         content for the file
      * @return
      */
     public static boolean saveFile(String fileFullName, byte[] data) {
@@ -227,7 +221,7 @@ abstract public class Helper {
             fos = new FileOutputStream(file);
             String key = Helper.findMd5fromPath(file);
             try {
-                byte[] encodedData = Helper.encodeFile(Helper.generateKey(key), data);
+                byte[] encodedData = Helper.encodeFile(Helper.generateKey(key), data, isPlainText(fileFullName));
                 fos.write(encodedData);
             } catch (Exception ex) {
                 Log.d(TAG, "Fail to encode data!!");
@@ -253,6 +247,7 @@ abstract public class Helper {
 
     /**
      * Load file and decrypt the content
+     *
      * @param fileFullName file name include the path info
      * @return
      */
@@ -262,10 +257,28 @@ abstract public class Helper {
         byte[] result = null;
         try {
             byte[] data = Helper.readFile(file);
-            result = Helper.decodeFile(Helper.generateKey(key), data);
+            result = Helper.decodeFile(Helper.generateKey(key), data, isPlainText(fileFullName));
         } catch (Exception ex) {
             Log.d(TAG, "Fail to load File: " + ex.getMessage());
         }
         return result;
+    }
+
+    private static boolean isPlainText(String fileFullName) {
+        boolean isPlainText = false;
+        if (fileFullName.endsWith(".json")) {
+            isPlainText = true;
+        }
+        return isPlainText;
+    }
+
+    public interface ErrorCallback {
+        /**
+         * Called when hint error
+         *
+         * @param title,   error title
+         * @param message, error message
+         */
+        void onErrorTaken(String title, String message);
     }
 }

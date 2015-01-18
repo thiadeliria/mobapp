@@ -13,7 +13,9 @@ abstract public class Person {
         for (Method method : methods) {
             if (method.getName().startsWith("get")) {
                 try {
-                    Field field = this.getClass().getDeclaredField(method.getName().substring(3).toLowerCase());
+                    String fieldName = method.getName().substring(3, 4).toLowerCase()
+                            + method.getName().substring(4);
+                    Field field = this.getClass().getDeclaredField(fieldName);
                     jsonObject.put(field.getName(), method.invoke(this));
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
