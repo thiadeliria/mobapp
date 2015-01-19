@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,7 +14,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.objects.Borrower;
@@ -23,10 +21,6 @@ import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,7 +57,7 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
     private EditText issueText;
     private EditText validityDateFromText;
 
-    private boolean invalidInputs = false;
+    private boolean isValidInputs = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,8 +95,8 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
             public void onPageSelected(int position) {
                 if (position == 1) {
                     // if move to other info page, need input the id and name first
-                    invalidInputs = validateIdCardInputs();
-                    if (invalidInputs) {
+                    isValidInputs = validateIdCardInputs();
+                    if (!isValidInputs) {
                         position = 0;
                         vp.setCurrentItem(position);
                     }
@@ -131,7 +125,7 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
     @Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
         // TODO Auto-generated method stub
-        if (invalidInputs) {
+        if (!isValidInputs) {
             vp.setCurrentItem(0);
             actionBar.setSelectedNavigationItem(0);
         }
@@ -143,106 +137,112 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
     }
 
     private boolean validateIdCardInputs() {
-        if (idText == null) {
-            idText = (EditText) idCard.getView().findViewById(R.id.idText);
-        }
-        if (nameText == null) {
-            nameText = (EditText) idCard.getView().findViewById(R.id.nameText);
-        }
-        if (maleButton == null) {
-            maleButton = (RadioButton) idCard.getView().findViewById(R.id.maleButton);
-        }
-        if (nationText == null) {
-            nationText = (EditText) idCard.getView().findViewById(R.id.nationText);
-        }
-        if (birthdayText == null) {
-            birthdayText = (EditText) idCard.getView().findViewById(R.id.birthdayText);
-        }
-        if (addressText == null) {
-            addressText = (EditText) idCard.getView().findViewById(R.id.addressText);
-        }
-        if (issueText == null) {
-            issueText = (EditText) idCard.getView().findViewById(R.id.issueText);
-        }
-        if (validityDateFromText == null) {
-            validityDateFromText = (EditText) idCard.getView().findViewById(R.id.validityDateFrom);
-        }
-        String id = "";
-        String name = "";
-        String sex = "";
-        String nation = "";
-        Date birthday = null;
-        String address = "";
-        String issue = "";
-        Date validityDateFrom = null;
+        if (idCard != null && idCard.getView() != null){
+            Log.d(TAG, "test---" + idCard.getView());
+            if (idText == null) {
+                idText = (EditText) idCard.getView().findViewById(R.id.idText);
+            }
+            if (nameText == null) {
+                nameText = (EditText) idCard.getView().findViewById(R.id.nameText);
+            }
+            if (maleButton == null) {
+                maleButton = (RadioButton) idCard.getView().findViewById(R.id.maleButton);
+            }
+            if (nationText == null) {
+                nationText = (EditText) idCard.getView().findViewById(R.id.nationText);
+            }
+            if (birthdayText == null) {
+                birthdayText = (EditText) idCard.getView().findViewById(R.id.birthdayText);
+            }
+            if (addressText == null) {
+                addressText = (EditText) idCard.getView().findViewById(R.id.addressText);
+            }
+            if (issueText == null) {
+                issueText = (EditText) idCard.getView().findViewById(R.id.issueText);
+            }
+            if (validityDateFromText == null) {
+                validityDateFromText = (EditText) idCard.getView().findViewById(R.id.validityDateFrom);
+            }
+            String id = "";
+            String name = "";
+            String sex = "";
+            String nation = "";
+            Date birthday = null;
+            String address = "";
+            String issue = "";
+            Date validityDateFrom = null;
 //        Date validityDateTo = null;
-        if (idText != null) {
-            id = idText.getText().toString();
-        }
-        if (nameText != null) {
-            name = nameText.getText().toString();
-        }
-        if (maleButton != null && maleButton.isSelected()) {
-            sex = "男";
-        } else {
-            sex = "女";
-        }
-        if (nationText != null) {
-            nation = nationText.getText().toString();
-        }
-        if (birthdayText != null) {
-            try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                birthday = dateFormat.parse(birthdayText.getText().toString());
-            } catch (ParseException pe) {
-                Log.d(TAG, "unexpected date format: " + birthdayText.getText().toString()
-                        + " , should be 'yyyy/MM/dd'");
-                //TODO: need should error message here
+            if (idText != null) {
+                id = idText.getText().toString();
             }
-        }
-        if (addressText != null) {
-            address = addressText.getText().toString();
-        }
-        if (issueText != null) {
-            issue = issueText.getText().toString();
-        }
-        if (validityDateFromText != null) {
-            try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                validityDateFrom = dateFormat.parse(validityDateFromText.getText().toString());
-            } catch (ParseException pe) {
-                Log.d(TAG, "unexpected date format: " + validityDateFromText.getText().toString()
-                        + " , should be 'yyyy/MM/dd'");
-                //TODO: need should error message here
+            if (nameText != null) {
+                name = nameText.getText().toString();
             }
-        }
-
-
-        if (id.equals("") || name.equals("")) {
-            DialogInterface.OnClickListener alertListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (nameText != null) {
-                        nameText.requestFocus();
-                    }
+            if (maleButton != null && !maleButton.isSelected()) {
+                sex = "男";
+            } else {
+                sex = "女";
+            }
+            if (nationText != null) {
+                nation = nationText.getText().toString();
+            }
+            if (birthdayText != null) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                    birthday = dateFormat.parse(birthdayText.getText().toString());
+                } catch (ParseException pe) {
+                    Log.d(TAG, "unexpected date format: " + birthdayText.getText().toString()
+                            + " , should be 'yyyy/MM/dd'");
+                    //TODO: need should error message here
                 }
-            };
-            Helper.showErrorMessage(CollectActivity.this, "错误", "必须输入姓名和身份证号码.",
-                    null, alertListener);
-            return true;
+            }
+            if (addressText != null) {
+                address = addressText.getText().toString();
+            }
+            if (issueText != null) {
+                issue = issueText.getText().toString();
+            }
+            if (validityDateFromText != null) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                    validityDateFrom = dateFormat.parse(validityDateFromText.getText().toString());
+                } catch (ParseException pe) {
+                    Log.d(TAG, "unexpected date format: " + validityDateFromText.getText().toString()
+                            + " , should be 'yyyy/MM/dd'");
+                    //TODO: need should error message here
+                }
+            }
+
+
+            if (id.equals("") || name.equals("")) {
+                DialogInterface.OnClickListener alertListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (nameText != null) {
+                            nameText.requestFocus();
+                        }
+                    }
+                };
+                Helper.showErrorMessage(CollectActivity.this, "错误", "必须输入姓名和身份证号码.",
+                        null, alertListener);
+                return false;
+            } else {
+                Borrower borrower = new Borrower();
+                borrower.setId(id);
+                borrower.setName(name);
+                borrower.setSex(sex);
+                borrower.setNation(nation);
+                borrower.setBirthday(birthday);
+                borrower.setAddress(address);
+                borrower.setIssue(issue);
+                borrower.setValidityDateFrom(validityDateFrom);
+                borrower.setValidityDateTo(validityDateFrom); //TODO need validatyDateTo
+                getIntent().putExtra(Constant.INTENT_KEY_ID, id);
+                getIntent().putExtra(Constant.INTENT_KEY_NAME, name);
+                saveIDInfo(borrower);
+                return true;
+            }
         } else {
-            Borrower borrower = new Borrower();
-            borrower.setId(id);
-            borrower.setName(name);
-            borrower.setSex(sex);
-            borrower.setNation(nation);
-            borrower.setBirthday(birthday);
-            borrower.setAddress(address);
-            borrower.setValidityDateFrom(validityDateFrom);
-            borrower.setValidityDateTo(validityDateFrom); //TODO need validatyDateTo
-            getIntent().putExtra(Constant.INTENT_KEY_ID, id);
-            getIntent().putExtra(Constant.INTENT_KEY_NAME, name);
-            saveIDInfo(borrower);
             return false;
         }
     }

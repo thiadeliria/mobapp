@@ -142,6 +142,10 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
                 activity.getFinishListener());
     }
 
+    public void setCameraDisplayOrientation() {
+        cameraManager.setDisplayOrientation(activity);
+    }
+
     private enum State {
         PREVIEW,
         PREVIEW_PAUSED,
