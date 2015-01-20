@@ -137,7 +137,7 @@ final class CameraConfigurationManager {
         parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
 
         parameters.setPictureFormat(ImageFormat.JPEG);
-        parameters.set("jpeg-quality", 85);
+//        parameters.set("jpeg-quality", 100);
         camera.setParameters(parameters);
     }
 
