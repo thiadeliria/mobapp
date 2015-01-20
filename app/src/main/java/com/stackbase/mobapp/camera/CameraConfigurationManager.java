@@ -3,6 +3,7 @@ package com.stackbase.mobapp.camera;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.preference.PreferenceManager;
@@ -94,8 +95,6 @@ final class CameraConfigurationManager {
 //            width = height;
 //            height = temp;
 //        }
-        camera.setDisplayOrientation(90);
-        parameters.setRotation(90);
         screenResolution = new Point(width, height);
         Log.i(TAG, "Screen resolution: " + screenResolution);
         cameraResolution = findBestPreviewSizeValue(parameters, screenResolution);
@@ -136,6 +135,9 @@ final class CameraConfigurationManager {
         }
 
         parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
+
+        parameters.setPictureFormat(ImageFormat.JPEG);
+        parameters.set("jpeg-quality", 85);
         camera.setParameters(parameters);
     }
 
