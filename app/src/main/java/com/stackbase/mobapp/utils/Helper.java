@@ -20,9 +20,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Created by gengjh on 1/17/15.
- */
 abstract public class Helper {
 
     private static final String TAG = Helper.class.getSimpleName();
@@ -119,8 +116,7 @@ abstract public class Helper {
             result = new String(str);
 
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "Fail to generate md5 string", e);
         }
         return result;
     }
@@ -222,12 +218,12 @@ abstract public class Helper {
             String key = Helper.findMd5fromPath(file);
             try {
                 byte[] encodedData = Helper.encodeFile(Helper.generateKey(key), data, isPlainText(fileFullName));
+//                byte[] encodedData = data;
                 fos.write(encodedData);
             } catch (Exception ex) {
                 Log.d(TAG, "Fail to encode data!!");
                 fos.write(data);
             }
-            fos.close();
             result = true;
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
@@ -258,6 +254,7 @@ abstract public class Helper {
         try {
             byte[] data = Helper.readFile(file);
             result = Helper.decodeFile(Helper.generateKey(key), data, isPlainText(fileFullName));
+//            result = data;
         } catch (Exception ex) {
             Log.d(TAG, "Fail to load File: " + ex.getMessage());
         }

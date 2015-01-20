@@ -1,9 +1,11 @@
 package com.stackbase.mobapp.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,14 +19,19 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.camera.BeepManager;
 import com.stackbase.mobapp.camera.CameraManager;
+import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 import com.stackbase.mobapp.view.ShutterButton;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This activity opens the camera and does the actual scanning on a background thread. It draws a
@@ -34,7 +41,7 @@ import java.io.IOException;
  * The code for this class was adapted from the ZXing project: http://code.google.com/p/zxing/
  */
 public final class CaptureActivity extends Activity implements SurfaceHolder.Callback,
-        ShutterButton.OnShutterButtonListener {
+        ShutterButton.OnShutterButtonListener, Camera.PictureCallback, View.OnClickListener {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
     // Context menu
@@ -53,6 +60,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private boolean isPaused;
     private OnSharedPreferenceChangeListener listener;
     private FinishListener finishListener;
+    private TextView savePictureTextView;
+    private TextView recaptureTextView;
+
+    private ProgressDialog progressDialog = null;
 
     public FinishListener getFinishListener() {
         return finishListener;
@@ -72,7 +83,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 // remove title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_capture);
         cameraButtonView = findViewById(R.id.camera_button_view);
 
@@ -84,6 +95,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         shutterButton = (ShutterButton) findViewById(R.id.shutter_button);
         shutterButton.setOnShutterButtonListener(this);
 
+        savePictureTextView = (TextView) findViewById(R.id.savePictureTextView);
+        recaptureTextView = (TextView) findViewById(R.id.recaptureTextView);
+
+        savePictureTextView.setOnClickListener(this);
+        recaptureTextView.setOnClickListener(this);
         cameraManager = new CameraManager(getApplication());
 
         finishListener = new FinishListener(this);
@@ -114,9 +130,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         handler.stop();
         beepManager.playBeepSoundAndVibrate();
 
-        // Capture picture and show confirm page
-        cameraManager.takePicture(handler);
-
+        savePictureTextView.setVisibility(View.VISIBLE);
+        recaptureTextView.setVisibility(View.VISIBLE);
+        shutterButton.setVisibility(View.GONE);
 
     }
 
@@ -153,9 +169,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             handler = new CaptureActivityHandler(this, cameraManager);
 
         } catch (IOException ioe) {
+            Log.e(TAG, "Fail to open camera driver", ioe);
             Helper.showErrorMessage(this, "错误", "不能打开照相机设备, 请重启您的手机或检查权限设置.",
                     finishListener, finishListener);
         } catch (RuntimeException e) {
+            Log.e(TAG, "Fail to open camera driver", e);
             // Barcode Scanner has seen crashes in the wild of this variety:
             // java.?lang.?RuntimeException: Fail to connect to camera service
             Helper.showErrorMessage(this, "错误", "不能打开照相机设备, 请重启您的手机或检查权限设置.",
@@ -224,9 +242,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     void resumeContinuousCapture() {
         isPaused = false;
         resetStatusView();
-        handler.resetState();
-        if (shutterButton != null) {
-            shutterButton.setVisibility(View.VISIBLE);
+        if (handler != null) {
+            handler.resetState();
         }
     }
 
@@ -264,7 +281,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        handler.setCameraDisplayOrientation();
+        if (handler != null) {
+            handler.setCameraDisplayOrientation();
+        }
     }
 
 
@@ -280,23 +299,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private void resetStatusView() {
         cameraButtonView.setVisibility(View.VISIBLE);
         shutterButton.setVisibility(View.VISIBLE);
-    }
-
-    void setButtonVisibility(boolean visible) {
-        if (shutterButton != null && visible == true) {
-            shutterButton.setVisibility(View.VISIBLE);
-        } else if (shutterButton != null) {
-            shutterButton.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Enables/disables the shutter button to prevent double-clicks on the button.
-     *
-     * @param clickable True if the button should accept a click
-     */
-    void setShutterButtonClickable(boolean clickable) {
-        shutterButton.setClickable(clickable);
+        savePictureTextView.setVisibility(View.GONE);
+        recaptureTextView.setVisibility(View.GONE);
     }
 
     /**
@@ -341,5 +345,78 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         beepManager.updatePrefs();
     }
 
+    @Override
+    public void onPictureTaken(byte[] data, Camera camera) {
+        Log.d(TAG, "In onPictureTaken");
+        if (data != null) {
+//            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+//            int screenHeight = getResources().getDisplayMetrics().heightPixels;
+//            Bitmap bm = BitmapFactory.decodeByteArray(data, 0, (data != null) ? data.length : 0);
+
+//            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+//                // Notice that width and height are reversed
+//                Bitmap scaled = Bitmap.createScaledBitmap(bm, screenHeight, screenWidth, true);
+//                int w = scaled.getWidth();
+//                int h = scaled.getHeight();
+//                // Setting post rotate to 90
+//                Matrix mtx = new Matrix();
+//                mtx.postRotate(90);
+//                // Rotating Bitmap
+//                bm = Bitmap.createBitmap(scaled, 0, 0, w, h, mtx, true);
+//            } else {// LANDSCAPE MODE
+//                //No need to reverse width and height
+//                Bitmap scaled = Bitmap.createScaledBitmap(bm, screenWidth, screenHeight, true);
+//                bm = scaled;
+//            }
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//            byte[] byteArray = stream.toByteArray();
+//            try {
+//                stream.close();
+//            } catch (IOException e) {
+//                Log.e(TAG, "Fail to close stream.", e);
+//            }
+//            if (!bm.isRecycled()) {
+//                bm.recycle();
+//            }
+            File pictureFile = getOutputMediaFile();
+            if (pictureFile == null) {
+                Log.d(TAG, "Error creating media file, check storage permissions!!");
+                return;
+            }
+            Helper.saveFile(pictureFile.getAbsolutePath(), data);
+        } else {
+            Log.d(TAG, "Did not get the data when take picture!");
+        }
+
+        // Close capture activity
+        finish();
+    }
+
+    private File getOutputMediaFile() {
+        //get the mobile Pictures directory
+        String storage_dir = getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER);
+        if (storage_dir == null || storage_dir.equals("")) {
+            storage_dir = getSharedPreferences().getString(PreferencesActivity.KEY_STORAGE_DIR, "");
+        }
+
+        File picDir = new File(storage_dir);
+        //get the current time
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        return new File(picDir.getAbsolutePath() + File.separator + "IMAGE_" + timeStamp + ".jpg");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.recaptureTextView:
+                resumeContinuousCapture();
+                break;
+            case R.id.savePictureTextView:
+                cameraManager.takePicture(this);
+                break;
+        }
+    }
 }
 

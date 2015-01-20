@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.camera.CameraManager;
@@ -27,7 +28,7 @@ import java.util.Date;
  * <p/>
  * The code for this class was adapted from the ZXing project: http://code.google.com/p/zxing/
  */
-final class CaptureActivityHandler extends Handler implements Camera.PictureCallback, Helper.ErrorCallback {
+final class CaptureActivityHandler extends Handler implements Helper.ErrorCallback {
 
     private static final String TAG = CaptureActivityHandler.class.getSimpleName();
     //  private final DecodeThread decodeThread;
@@ -43,11 +44,6 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
         cameraManager.startPreview();
 
         state = State.SUCCESS;
-
-        // Show the shutter and torch buttons
-        activity.setButtonVisibility(true);
-
-        restartPreview();
     }
 
     @Override
@@ -68,7 +64,7 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
         state = State.CONTINUOUS_PAUSED;
 
         // Freeze the view displayed to the user.
-//    CameraManager.get().stopPreview();
+        cameraManager.stopPreview();
     }
 
     void resetState() {
@@ -92,7 +88,7 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
      */
     private void restartPreview() {
         // Display the shutter and torch buttons
-        activity.setButtonVisibility(true);
+        activity.resumeContinuousCapture();
 
         if (state == State.SUCCESS) {
             state = State.PREVIEW;
@@ -110,30 +106,6 @@ final class CaptureActivityHandler extends Handler implements Camera.PictureCall
         // Continue capturing camera frames
         cameraManager.startPreview();
 
-    }
-
-    @Override
-    public void onPictureTaken(byte[] data, Camera camera) {
-        File pictureFile = getOutputMediaFile();
-        if (pictureFile == null){
-            Log.d(TAG, "Error creating media file, check storage permissions!!");
-            return;
-        }
-        Helper.saveFile(pictureFile.getAbsolutePath(), data);
-    }
-
-    private File getOutputMediaFile(){
-        //get the mobile Pictures directory
-        String storage_dir = activity.getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER);
-        if (storage_dir == null || storage_dir.equals("")) {
-            storage_dir = activity.getSharedPreferences().getString(PreferencesActivity.KEY_STORAGE_DIR, "");
-        }
-
-        File picDir = new File(storage_dir);
-        //get the current time
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        return new File(picDir.getAbsolutePath() + File.separator + "IMAGE_"+ timeStamp + ".jpg");
     }
 
     @Override
