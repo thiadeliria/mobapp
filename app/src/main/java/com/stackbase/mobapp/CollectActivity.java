@@ -138,7 +138,6 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
 
     private boolean validateIdCardInputs() {
         if (idCard != null && idCard.getView() != null){
-            Log.d(TAG, "test---" + idCard.getView());
             if (idText == null) {
                 idText = (EditText) idCard.getView().findViewById(R.id.idText);
             }
