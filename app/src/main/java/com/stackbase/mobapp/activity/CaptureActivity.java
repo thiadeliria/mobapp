@@ -177,13 +177,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         } catch (IOException ioe) {
             Log.e(TAG, "Fail to open camera driver", ioe);
             Helper.showErrorMessage(this, "错误", "不能打开照相机设备, 请重启您的手机或检查权限设置.",
-                    finishListener, finishListener);
+                    null, finishListener);
         } catch (RuntimeException e) {
             Log.e(TAG, "Fail to open camera driver", e);
             // Barcode Scanner has seen crashes in the wild of this variety:
             // java.?lang.?RuntimeException: Fail to connect to camera service
             Helper.showErrorMessage(this, "错误", "不能打开照相机设备, 请重启您的手机或检查权限设置.",
-                    finishListener, finishListener);
+                    null, finishListener);
         }
     }
 
@@ -253,6 +253,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             handler.resetState();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -426,7 +427,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         return new File(picDir.getAbsolutePath() + File.separator + "IMAGE_" + timeStamp + ".jpg");
     }
 
-    private void savePictureFromView() {
+    private String savePictureFromView() {
+        String fileName = "";
         if (pictureConfirmImageView != null) {
             BitmapDrawable drawable = (BitmapDrawable) pictureConfirmImageView.getDrawable();
             if (drawable != null && drawable.getBitmap() != null) {
@@ -436,7 +438,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 File pictureFile = getOutputMediaFile();
                 if (pictureFile == null) {
                     Log.d(TAG, "Error creating media file, check storage permissions!!");
-                    return;
+                } else {
+                    Helper.saveFile(pictureFile.getAbsolutePath(), byteArray);
+                    fileName = pictureFile.getAbsolutePath();
                 }
                 releaseBitmap();
                 try {
@@ -444,9 +448,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 } catch (IOException e) {
                     Log.e(TAG, "Fail to close stream.", e);
                 }
-                Helper.saveFile(pictureFile.getAbsolutePath(), byteArray);
+
             }
         }
+        return fileName;
     }
 
     @Override
@@ -456,7 +461,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 resumeContinuousCapture();
                 break;
             case R.id.savePictureTextView:
-                savePictureFromView();
+                String fileName = savePictureFromView();
+                Intent intent = new Intent();
+                intent.putExtra(Constant.INTENT_KEY_PIC_FULLNAME, fileName);
+                this.setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
         }

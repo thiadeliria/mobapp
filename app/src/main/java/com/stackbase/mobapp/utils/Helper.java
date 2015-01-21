@@ -31,14 +31,17 @@ abstract public class Helper {
      * @param message The error message to be displayed
      */
     public static void showErrorMessage(Context context, String title, String message,
-                                        DialogInterface.OnCancelListener cancelListener,
+                                        DialogInterface.OnClickListener cancelListener,
                                         DialogInterface.OnClickListener positiveListener) {
-        new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setOnCancelListener(cancelListener)
-                .setPositiveButton("确认", positiveListener)
-                .show();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context).setTitle(title)
+                .setMessage(message);
+        if (cancelListener != null) {
+            dialog.setNegativeButton("取消", cancelListener);
+        }
+        if (positiveListener != null) {
+            dialog.setPositiveButton("确认", positiveListener);
+        }
+        dialog.show();
     }
 
     /**

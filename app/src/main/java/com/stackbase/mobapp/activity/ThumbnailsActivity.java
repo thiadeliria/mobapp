@@ -1,6 +1,7 @@
 package com.stackbase.mobapp.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.utils.Constant;
+import com.stackbase.mobapp.utils.Helper;
 import com.stackbase.mobapp.view.GridViewAdapter;
 
 import java.io.File;
@@ -27,7 +29,7 @@ import java.util.Map;
 public class ThumbnailsActivity extends Activity implements AbsListView.OnScrollListener {
 
     private GridView gridView;
-    private BaseAdapter customGridAdapter;
+    private GridViewAdapter customGridAdapter;
     private ImageButton takePictureBtn;
     private static final String TAG = ThumbnailsActivity.class.getSimpleName();
     private ArrayList<String> mList = null;
@@ -64,8 +66,13 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0) {
             // refresh the Gridview
-            initData();
-            setAdapter();
+            if (resultCode == Activity.RESULT_OK) {
+                String newPicture = data.getStringExtra(Constant.INTENT_KEY_PIC_FULLNAME);
+                if (newPicture != null && !newPicture.equals("")) {
+                    customGridAdapter.add(newPicture);
+                    customGridAdapter.notifyDataSetChanged();
+                }
+            }
         }
     }
 
@@ -126,19 +133,55 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
 
             }
         });
+
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                Helper.showErrorMessage(ThumbnailsActivity.this, "警告", "确定要删除这张图片吗？",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //do nothing
+                            }
+                        },
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String str = (String) gridView.getItemAtPosition(position);
+                                File file = new File(str);
+                                file.delete();
+                                deleteItem(str);
+                                customGridAdapter.remove(str);
+                                customGridAdapter.notifyDataSetChanged();
+                            }
+                        });
+                return false;
+            }
+        });
+    }
+
+    private void removeBitmapCache(String url) {
+        Bitmap delBitmap;
+        delBitmap = gridviewBitmapCaches.get(url);
+        if (delBitmap != null) {
+            Log.d(TAG, "release position:" + url);
+            gridviewBitmapCaches.remove(url);
+            delBitmap.recycle();
+            delBitmap = null;
+        }
+    }
+
+    private void deleteItem(String url) {
+        mList.remove(url);
+        removeBitmapCache(url);
     }
 
     private void recycleBitmapCaches(int fromPosition, int toPosition) {
-        Bitmap delBitmap = null;
         for (int del = fromPosition; del < toPosition; del++) {
-            if (mList.get(del) != null) {
-                delBitmap = gridviewBitmapCaches.get(mList.get(del));
-                if (delBitmap != null) {
-                    Log.d(TAG, "release position:" + del);
-                    gridviewBitmapCaches.remove(mList.get(del));
-                    delBitmap.recycle();
-                    delBitmap = null;
-                }
+            String str = mList.get(del);
+            if (str != null) {
+                removeBitmapCache(str);
             }
         }
     }

@@ -3,7 +3,6 @@ package com.stackbase.mobapp.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.activity.ThumbnailsActivity;
 import com.stackbase.mobapp.utils.BitmapUtilities;
-import com.stackbase.mobapp.utils.Helper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -40,6 +38,16 @@ public class GridViewAdapter extends ArrayAdapter<String> {
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+    }
+
+    @Override
+    public void remove(String url) {
+        this.data.remove(url);
+    }
+
+    @Override
+    public void add(String url) {
+        this.data.add(url);
     }
 
     @Override
