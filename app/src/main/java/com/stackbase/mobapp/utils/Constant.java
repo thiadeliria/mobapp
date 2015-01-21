@@ -52,5 +52,6 @@ abstract public class Constant {
     public static final String INTENT_KEY_ID = "INTENT_NAME_ID";
     public static final String INTENT_KEY_NAME = "INTENT_KEY_NAME";
     public static final String INTENT_KEY_PIC_FOLDER = "INTENT_KEY_PIC_FOLDER";
+    public static final String INTENT_KEY_PIC_FULLNAME = "INTENT_KEY_PIC_FULLNAME";
 
 }

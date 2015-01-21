@@ -13,5 +13,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_thumbnails">ThumbnailsActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_full_picture_review">FullPictureReviewActivity</string>
 
 </resources>
