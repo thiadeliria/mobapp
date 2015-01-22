@@ -1,27 +1,12 @@
 package com.stackbase.mobapp.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.hardware.Camera;
-import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.camera.CameraManager;
-import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * This class handles all the messaging which comprises the state machine for capture.

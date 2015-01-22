@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.activity.ThumbnailsActivity;

@@ -1,11 +1,5 @@
 package com.stackbase.mobapp.utils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
-import com.stackbase.mobapp.activity.PreferencesActivity;
-
 /**
  * Created by gengjh on 1/16/15.
  */

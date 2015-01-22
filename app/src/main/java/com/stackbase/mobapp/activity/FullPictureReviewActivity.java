@@ -1,26 +1,16 @@
 package com.stackbase.mobapp.activity;
 
-import com.stackbase.mobapp.activity.util.SystemUiHider;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-
-import com.stackbase.mobapp.R;
-import com.stackbase.mobapp.utils.BitmapUtilities;
-import com.stackbase.mobapp.utils.Constant;
-
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import com.stackbase.mobapp.R;
+import com.stackbase.mobapp.utils.BitmapUtilities;
+import com.stackbase.mobapp.utils.Constant;
 
 public class FullPictureReviewActivity extends Activity {
 
