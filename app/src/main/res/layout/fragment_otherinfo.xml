@@ -1,99 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:background="#eaeaea"
+    android:nestedScrollingEnabled="true"
+    android:padding="17dp"
+    android:useDefaultMargins="true" >
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        android:nestedScrollingEnabled="true"
-        android:useDefaultMargins="true">
+    <TextView
+        android:id="@+id/album_folder_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="0"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="19dp"
+        android:layout_row="1"
+        android:editable="true"
+        android:tag="@string/album_folder_tag"
+        android:text="征信报告" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="征信报告"
-            android:id="@+id/album_folder_1"
-            android:tag="@string/album_folder_tag"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:layout_gravity="center_horizontal"
-            android:editable="true"/>
+    <ImageButton
+        android:id="@+id/creditReportBtn"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_column="0"
+        android:layout_gravity="center_horizontal"
+        android:layout_row="0"
+        android:background="@drawable/album"
+        android:labelFor="@id/album_folder_1" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/creditReportBtn"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/album"
-            android:labelFor="@id/album_folder_1" />
+    <TextView
+        android:id="@+id/album_folder_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:layout_gravity="center_horizontal"
+        android:layout_row="1"
+        android:editable="true"
+        android:tag="album_folder_name"
+        android:text="结婚证" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="结婚证"
-            android:id="@+id/album_folder_2"
-            android:tag="album_folder_name"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:layout_gravity="center_horizontal"
-            android:editable="true" />
+    <ImageButton
+        android:id="@+id/marriageCertBtn"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_column="1"
+        android:layout_gravity="center_horizontal"
+        android:layout_row="0"
+        android:background="@drawable/album"
+        android:labelFor="@id/album_folder_2" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/marriageCertBtn"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/album"
-            android:labelFor="@id/album_folder_2" />
+    <TextView
+        android:id="@+id/album_folder_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_row="1"
+        android:editable="true"
+        android:tag="album_folder_name"
+        android:text="合同" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="合同"
-            android:id="@+id/album_folder_3"
-            android:tag="album_folder_name"
-            android:layout_row="1"
-            android:layout_column="2"
-            android:layout_gravity="center_horizontal"
-            android:editable="true" />
+    <ImageButton
+        android:id="@+id/contractBtn"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_column="2"
+        android:layout_row="0"
+        android:background="@drawable/album"
+        android:labelFor="@id/album_folder_3" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/contractBtn"
-            android:layout_row="0"
-            android:layout_column="2"
-            android:background="@drawable/album"
-            android:labelFor="@id/album_folder_3" />
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="0"
+        android:layout_gravity="center_horizontal"
+        android:layout_row="3"
+        android:editable="true"
+        android:tag="@string/album_folder_tag" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView9"
-            android:tag="@string/album_folder_tag"
-            android:layout_row="3"
-            android:layout_column="0"
-            android:layout_gravity="center_horizontal"
-            android:editable="true" />
+    <ImageButton
+        android:id="@+id/imageButton4"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_column="0"
+        android:layout_gravity="center_horizontal"
+        android:layout_row="2"
+        android:background="@drawable/ic_add_dark" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton4"
-            android:layout_row="2"
-            android:layout_column="0"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/add_type" />
-
-
-    </GridLayout>
-
-</LinearLayout>
+</GridLayout>

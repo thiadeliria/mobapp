@@ -31,7 +31,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".HomePage"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,7 +70,7 @@
         <activity
             android:name=".activity.FullPictureReviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_full_picture_review"
+            android:label="@string/app_name"
             android:theme="@style/FullscreenTheme" >
         </activity>
     </application>
