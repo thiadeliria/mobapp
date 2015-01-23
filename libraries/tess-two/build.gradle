@@ -6,7 +6,9 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
+
 apply plugin: 'android-library'
+
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -19,6 +21,33 @@ android {
         java.srcDirs = ['src']
         resources.srcDirs = ['src']
         res.srcDirs = ['res']
-        jniLibs.srcDirs = ['libs']
+        jni.srcDirs = []
+//        jniLibs.srcDirs = ['libs']
+
     }
+
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        String ndkDir = project.plugins.findPlugin('android-library').getNdkFolder()
+        commandLine "$ndkDir/ndk-build",
+                'NDK_PROJECT_PATH=build/intermediates/ndk',
+                'NDK_LIBS_OUT=libs',
+                'APP_BUILD_SCRIPT=jni/Android.mk',
+                'NDK_APPLICATION_MK=jni/Application.mk'
+    }
+
+    task ndkLibsToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native libs') {
+        destinationDir new File(buildDir, 'libs')
+        baseName 'tess-two'
+        extension 'jar'
+        from(new File(buildDir, 'libs')) { include '**/*.so' }
+        into 'lib/'
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkLibsToJar
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
