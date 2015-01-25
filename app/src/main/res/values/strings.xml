@@ -7,7 +7,7 @@
     <string name="borrowers">借款人管理</string>
     <string name="settings">设置</string>
     
-<!--     capture -->
+<!--     ocr_capture -->
     <string name="use_picture">使用照片</string>
     <string name="retake">重拍</string>
     

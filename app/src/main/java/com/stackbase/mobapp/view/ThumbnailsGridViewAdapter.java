@@ -22,6 +22,7 @@ import com.stackbase.mobapp.utils.BitmapUtilities;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ThumbnailsGridViewAdapter extends ArrayAdapter<Thumbnail> {
 
@@ -83,14 +84,17 @@ public class ThumbnailsGridViewAdapter extends ArrayAdapter<Thumbnail> {
 
     private Bitmap getBitmapFromUrl(String url) {
         Bitmap bitmap = null;
-        bitmap = ThumbnailsActivity.getGridviewBitmapCaches().get(url);
-        if (bitmap != null) {
-            Log.d(TAG, "Find bitmap from Cache: " + url);
-            return bitmap;
-        }
+        Map<String, Bitmap> caches = ThumbnailsActivity.getGridviewBitmapCaches();
+        if ( caches != null) {
+            bitmap = caches.get(url);
+            if (bitmap != null) {
+                Log.d(TAG, "Find bitmap from Cache: " + url);
+                return bitmap;
+            }
 
-        bitmap = BitmapUtilities.getBitmap(url);
-        bitmap = BitmapUtilities.getBitmapThumbnail(bitmap, width, height);
+            bitmap = BitmapUtilities.getBitmap(url);
+            bitmap = BitmapUtilities.getBitmapThumbnail(bitmap, width, height);
+        }
         return bitmap;
     }
 
@@ -105,10 +109,18 @@ public class ThumbnailsGridViewAdapter extends ArrayAdapter<Thumbnail> {
 
         @Override
         protected Bitmap doInBackground(Integer... params) {
-            Bitmap bitmap;
-            this.url = data.get(params[0]).getPictureName();
-            bitmap = getBitmapFromUrl(url);
-            ThumbnailsActivity.getGridviewBitmapCaches().put(data.get(params[0]).getPictureName(), bitmap);
+            Bitmap bitmap = null;
+            if (data != null) {
+                Thumbnail thumbnail = data.get(params[0]);
+                if (thumbnail != null) {
+                    this.url = thumbnail.getPictureName();
+                    bitmap = getBitmapFromUrl(url);
+                    Map<String, Bitmap> caches = ThumbnailsActivity.getGridviewBitmapCaches();
+                    if (caches != null) {
+                        caches.put(thumbnail.getPictureName(), bitmap);
+                    }
+                }
+            }
             return bitmap;
         }
 

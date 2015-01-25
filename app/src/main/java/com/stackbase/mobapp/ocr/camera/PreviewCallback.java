@@ -1,4 +1,4 @@
-package com.stackbase.mobapp.camera;
+package com.stackbase.mobapp.ocr.camera;
 
 import android.graphics.Point;
 import android.hardware.Camera;

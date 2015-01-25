@@ -20,4 +20,5 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile project(':libraries:tess-two')
+    compile 'org.xeustechnologies:jtar:1.1'
 }

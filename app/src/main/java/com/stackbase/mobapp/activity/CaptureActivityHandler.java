@@ -9,7 +9,7 @@ import com.stackbase.mobapp.camera.CameraManager;
 import com.stackbase.mobapp.utils.Helper;
 
 /**
- * This class handles all the messaging which comprises the state machine for capture.
+ * This class handles all the messaging which comprises the state machine for ocr_capture.
  * <p/>
  * The code for this class was adapted from the ZXing project: http://code.google.com/p/zxing/
  */
