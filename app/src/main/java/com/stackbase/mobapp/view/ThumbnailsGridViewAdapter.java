@@ -17,23 +17,24 @@ import android.widget.TextView;
 
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.activity.ThumbnailsActivity;
+import com.stackbase.mobapp.objects.Thumbnail;
 import com.stackbase.mobapp.utils.BitmapUtilities;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class GridViewAdapter extends ArrayAdapter<String> {
+public class ThumbnailsGridViewAdapter extends ArrayAdapter<Thumbnail> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<String> data = new ArrayList<String>();
+    private ArrayList<Thumbnail> data = new ArrayList<Thumbnail>();
 
     private int width = 100;
     private int height = 120;
-    private static final String TAG = GridViewAdapter.class.getSimpleName();
+    private static final String TAG = ThumbnailsGridViewAdapter.class.getSimpleName();
 
-    public GridViewAdapter(Context context, int layoutResourceId,
-                           ArrayList<String> data) {
+    public ThumbnailsGridViewAdapter(Context context, int layoutResourceId,
+                                     ArrayList<Thumbnail> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -41,13 +42,13 @@ public class GridViewAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public void remove(String url) {
-        this.data.remove(url);
+    public void remove(Thumbnail thumbnail) {
+        this.data.remove(thumbnail);
     }
 
     @Override
-    public void add(String url) {
-        this.data.add(url);
+    public void add(Thumbnail thumbnail) {
+        this.data.add(thumbnail);
     }
 
     @Override
@@ -64,14 +65,18 @@ public class GridViewAdapter extends ArrayAdapter<String> {
             viewHolder = (ImageItem) convertView.getTag();
         }
 
-        String url = data.get(position);
-        if (cancelPotentialLoad(url, viewHolder.getImageView())) {
+        Thumbnail thumbnail = data.get(position);
+        if (cancelPotentialLoad(thumbnail, viewHolder.getImageView())) {
             AsyncLoadImageTask task = new AsyncLoadImageTask(viewHolder.getImageView());
             LoadedDrawable loadedDrawable = new LoadedDrawable(task);
             viewHolder.getImageView().setImageDrawable(loadedDrawable);
             task.execute(position);
         }
-        viewHolder.getTextView().setText("Image#" + position);
+        if (thumbnail.getDescription() == null || thumbnail.getDescription().equals("")) {
+            viewHolder.getTextView().setText("Image#" + position);
+        } else {
+            viewHolder.getTextView().setText(thumbnail.getDescription());
+        }
         return convertView;
     }
 
@@ -101,9 +106,9 @@ public class GridViewAdapter extends ArrayAdapter<String> {
         @Override
         protected Bitmap doInBackground(Integer... params) {
             Bitmap bitmap;
-            this.url = data.get(params[0]);
+            this.url = data.get(params[0]).getPictureName();
             bitmap = getBitmapFromUrl(url);
-            ThumbnailsActivity.getGridviewBitmapCaches().put(data.get(params[0]), bitmap);
+            ThumbnailsActivity.getGridviewBitmapCaches().put(data.get(params[0]).getPictureName(), bitmap);
             return bitmap;
         }
 
@@ -126,12 +131,12 @@ public class GridViewAdapter extends ArrayAdapter<String> {
     }
 
 
-    private boolean cancelPotentialLoad(String url, ImageView imageview) {
+    private boolean cancelPotentialLoad(Thumbnail thumbnail, ImageView imageview) {
         AsyncLoadImageTask loadImageTask = getAsyncLoadImageTask(imageview);
 
         if (loadImageTask != null) {
             String bitmapUrl = loadImageTask.url;
-            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+            if ((bitmapUrl == null) || (!bitmapUrl.equals(thumbnail.getPictureName()))) {
                 loadImageTask.cancel(true);
             } else {
                 return false;

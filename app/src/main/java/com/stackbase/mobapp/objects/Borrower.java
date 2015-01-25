@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by gengjh on 1/18/15.
  */
-public class Borrower extends Person {
+public class Borrower extends JSONObj {
     private String id = "";
     private String name = "";
     private String sex = "";

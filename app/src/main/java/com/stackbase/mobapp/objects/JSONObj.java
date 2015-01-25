@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-abstract public class Person {
+abstract public class JSONObj {
 
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();

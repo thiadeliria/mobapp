@@ -15,9 +15,10 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 
 import com.stackbase.mobapp.R;
+import com.stackbase.mobapp.objects.Thumbnail;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
-import com.stackbase.mobapp.view.GridViewAdapter;
+import com.stackbase.mobapp.view.ThumbnailsGridViewAdapter;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -28,10 +29,10 @@ import java.util.Map;
 public class ThumbnailsActivity extends Activity implements AbsListView.OnScrollListener {
 
     private GridView gridView;
-    private GridViewAdapter customGridAdapter;
+    private ThumbnailsGridViewAdapter customGridAdapter;
     private ImageButton takePictureBtn;
     private static final String TAG = ThumbnailsActivity.class.getSimpleName();
-    private ArrayList<String> mList = null;
+    private ArrayList<Thumbnail> mList = null;
     private static Map<String, Bitmap> gridviewBitmapCaches = null;
 
     public static Map<String, Bitmap> getGridviewBitmapCaches() {
@@ -68,7 +69,9 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
             if (resultCode == Activity.RESULT_OK) {
                 String newPicture = data.getStringExtra(Constant.INTENT_KEY_PIC_FULLNAME);
                 if (newPicture != null && !newPicture.equals("")) {
-                    customGridAdapter.add(newPicture);
+                    Thumbnail thumbnail = new Thumbnail();
+                    thumbnail.setPictureName(newPicture);
+                    customGridAdapter.add(thumbnail);
                     customGridAdapter.notifyDataSetChanged();
                 }
             }
@@ -98,7 +101,7 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
     }
 
     private void initData() {
-        mList = new ArrayList<String>();
+        mList = new ArrayList<Thumbnail>();
         String picFolder = getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER);
         File pF = new File(picFolder);
         File[] pictures = pF.listFiles(new FilenameFilter() {
@@ -112,12 +115,14 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
             }
         });
         for (int i = 0; i < pictures.length; i++) {
-            mList.add(pictures[i].getAbsolutePath());
+            Thumbnail thumbnail = new Thumbnail();
+            thumbnail.setPictureName(pictures[i].getAbsolutePath());
+            mList.add(thumbnail);
         }
     }
 
     private void setAdapter() {
-        customGridAdapter = new GridViewAdapter(this, R.layout.thumbnail_row, mList);
+        customGridAdapter = new ThumbnailsGridViewAdapter(this, R.layout.thumbnail_row, mList);
         gridView.setAdapter(customGridAdapter);
         gridView.setOnScrollListener(this);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,7 +131,7 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
                                     int position, long id) {
                 Log.d(TAG, "onItemClick : " + gridView.getItemAtPosition(position));
                 Intent intent = new Intent();
-                intent.putExtra(Constant.INTENT_KEY_PIC_FULLNAME, (String) gridView.getItemAtPosition(position));
+                intent.putExtra(Constant.INTENT_KEY_PIC_FULLNAME, ((Thumbnail)gridView.getItemAtPosition(position)).getPictureName());
                 intent.setClass(ThumbnailsActivity.this, FullPictureReviewActivity.class);
                 startActivity(intent);
 
@@ -147,11 +152,11 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String str = (String) gridView.getItemAtPosition(position);
-                                File file = new File(str);
+                                Thumbnail thumbnail = (Thumbnail) gridView.getItemAtPosition(position);
+                                File file = new File(thumbnail.getPictureName());
                                 file.delete();
-                                deleteItem(str);
-                                customGridAdapter.remove(str);
+                                deleteItem(thumbnail.getPictureName());
+                                customGridAdapter.remove(thumbnail);
                                 customGridAdapter.notifyDataSetChanged();
                             }
                         });
@@ -178,9 +183,9 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
 
     private void recycleBitmapCaches(int fromPosition, int toPosition) {
         for (int del = fromPosition; del < toPosition; del++) {
-            String str = mList.get(del);
-            if (str != null) {
-                removeBitmapCache(str);
+            Thumbnail thumbnail = mList.get(del);
+            if (thumbnail != null) {
+                removeBitmapCache(thumbnail.getPictureName());
             }
         }
     }
