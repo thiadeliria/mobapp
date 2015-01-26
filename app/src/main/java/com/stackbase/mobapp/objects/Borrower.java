@@ -12,9 +12,9 @@ public class Borrower extends JSONObj {
     private String nation = "";
     private Date birthday = null;
     private String address = "";
-    private String issue = "";
-    private Date validityDateFrom = null;
-    private Date validityDateTo = null;
+    private String location = "";
+    private Date expiryFrom = null;
+    private Date expiryTo = null;
 
     public String getId() {
         return id;
@@ -64,27 +64,27 @@ public class Borrower extends JSONObj {
         this.address = address;
     }
 
-    public String getIssue() {
-        return issue;
+    public String getLocation() {
+        return location;
     }
 
-    public void setIssue(String issue) {
-        this.issue = issue;
+    public void setLocation(String issue) {
+        this.location = issue;
     }
 
-    public Date getValidityDateFrom() {
-        return validityDateFrom;
+    public Date getExpiryFrom() {
+        return expiryFrom;
     }
 
-    public void setValidityDateFrom(Date validityDateFrom) {
-        this.validityDateFrom = validityDateFrom;
+    public void setExpiryFrom(Date validityDateFrom) {
+        this.expiryFrom = validityDateFrom;
     }
 
-    public Date getValidityDateTo() {
-        return validityDateTo;
+    public Date getExpiryTo() {
+        return expiryTo;
     }
 
-    public void setValidityDateTo(Date validityDateTo) {
-        this.validityDateTo = validityDateTo;
+    public void setExpiryTo(Date validityDateTo) {
+        this.expiryTo = validityDateTo;
     }
 }
