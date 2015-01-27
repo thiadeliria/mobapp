@@ -9,16 +9,29 @@ android {
         targetSdkVersion 21
     }
 
+    signingConfigs {
+        mobappRelease{
+            storeFile file("eloancn.jks")
+            storePassword "stackbase_eloancn"
+            keyAlias "stackbase"
+            keyPassword "stackbase_eloancn"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig  signingConfigs.mobappRelease
+
         }
     }
 }
 
+
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile project(':libraries:tess-two')
+    compile fileTree(dir: '../libraries/tess-two/build/libs', include: '*.jar')
     compile 'org.xeustechnologies:jtar:1.1'
 }
