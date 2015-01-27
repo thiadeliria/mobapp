@@ -8,27 +8,25 @@
     tools:context="com.stackbase.mobapp.activity.ThumbnailsActivity" >
 
     <ImageView
-        android:id="@+id/bottomBanner"
+        android:id="@+id/topBanner"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_alignParentTop="true"
         android:background="@drawable/bgd_gradient_black" />
-
     <ImageButton
         android:id="@+id/takepictureBtn"
-        android:layout_width="39dp"
-        android:layout_height="39dp"
+        android:layout_width="49dp"
+        android:layout_height="49dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/ic_camera" />
+        android:layout_marginRight="10dp"
+        android:background="@drawable/ic_camera" />
 
     <GridView
         android:id="@+id/picturesGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/bottomBanner"
+        android:layout_below="@id/topBanner"
         android:layout_margin="5dp"
         android:columnWidth="100dp"
         android:drawSelectorOnTop="true"
