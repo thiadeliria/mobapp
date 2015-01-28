@@ -43,6 +43,7 @@ import com.stackbase.mobapp.activity.FinishListener;
 import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.camera.BeepManager;
 import com.stackbase.mobapp.ocr.camera.CameraManager;
+import com.stackbase.mobapp.utils.LanguageCodeHelper;
 import com.stackbase.mobapp.view.ShutterButton;
 import com.stackbase.mobapp.view.ViewfinderView;
 
@@ -676,10 +677,9 @@ public final class CaptureActivity extends Activity implements
      */
     private boolean setSourceLanguage(String languageCode) {
         sourceLanguageCodeOcr = languageCode;
-        // sourceLanguageCodeTranslation =
-        // LanguageCodeHelper.mapLanguageCode(languageCode);
-        // sourceLanguageReadable = LanguageCodeHelper.getOcrLanguageName(this,
-        // languageCode);
+        sourceLanguageCodeTranslation = LanguageCodeHelper.mapLanguageCode(languageCode);
+        sourceLanguageReadable = LanguageCodeHelper.getOcrLanguageName(this,
+        languageCode);
         return true;
     }
 
