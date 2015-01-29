@@ -36,14 +36,37 @@ android {
     }
 
     task ndkLibsToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native libs') {
-        destinationDir new File(buildDir, 'libs')
-        baseName 'tess-two'
+        destinationDir new File(rootDir, 'libs')
+        baseName 'tess-two-native'
         extension 'jar'
-        from(new File('libs')) { include '**/*.so' }
+        from(new File('libs')) { include '**/*.so'
+            exclude 'x86'
+        }
         into 'lib/'
+    }
+
+    task makeJar(type: Copy, dependsOn: tasks.withType(JavaCompile), description: 'Create a JAR of the java classes') {
+        from("build/intermediates/bundles/debug")
+        into new File(rootDir, 'libs')
+        include('classes.jar')
+        rename ('classes.jar', 'tess-two-classes.jar')
     }
 
     tasks.withType(JavaCompile) {
         compileTask -> compileTask.dependsOn ndkLibsToJar
     }
+
+//    buildTypes.all{ buildType ->
+//        task "${buildType.name}CopyFiles" (type: Copy)
+//        "${buildType.name}CopyFiles" {
+//            description = 'Create a JAR of the java classes'
+//            from("build/intermediates/classes/${buildType.name}")
+//            into('../../libs')
+//            include('classes.jar')
+//            rename ('classes.jar', 'tess-two-classes.jar')
+//        }
+//
+//        tasks.getByPath(":libraries:${project.name}:compileReleaseSources").dependsOn "${buildType.name}CopyFiles"
+//    }
+
 }
