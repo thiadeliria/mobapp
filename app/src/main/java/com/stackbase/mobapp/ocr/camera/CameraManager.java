@@ -24,13 +24,13 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
-import com.stackbase.mobapp.camera.AutoFocusManager;
-import com.stackbase.mobapp.camera.PlanarYUVLuminanceSource;
-
 import java.io.IOException;
+
+import com.stackbase.mobapp.ocr.PlanarYUVLuminanceSource;
+import com.stackbase.mobapp.ocr.PreferencesActivity;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
@@ -75,7 +75,7 @@ public final class CameraManager {
    * Opens the camera driver and initializes the hardware parameters.
    *
    * @param holder The surface object which the camera will draw preview frames into.
-   * @throws IOException Indicates the camera driver failed to open.
+   * @throws java.io.IOException Indicates the camera driver failed to open.
    */
   public synchronized void openDriver(SurfaceHolder holder) throws IOException {
     Camera theCamera = camera;

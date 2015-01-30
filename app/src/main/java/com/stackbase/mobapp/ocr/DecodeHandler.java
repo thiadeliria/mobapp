@@ -17,18 +17,17 @@
 
 package com.stackbase.mobapp.ocr;
 
+import com.googlecode.leptonica.android.ReadFile;
+import com.googlecode.tesseract.android.TessBaseAPI;
+import com.stackbase.mobapp.ocr.BeepManager;
+import com.stackbase.mobapp.ocr.CaptureActivity;
+import com.stackbase.mobapp.R;
+
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-
-import com.googlecode.leptonica.android.ReadFile;
-import com.googlecode.tesseract.android.TessBaseAPI;
-import com.stackbase.mobapp.R;
-import com.stackbase.mobapp.camera.BeepManager;
-import com.stackbase.mobapp.camera.PlanarYUVLuminanceSource;
-import com.stackbase.mobapp.view.ViewfinderView;
 
 /**
  * Class to send bitmap data for OCR.

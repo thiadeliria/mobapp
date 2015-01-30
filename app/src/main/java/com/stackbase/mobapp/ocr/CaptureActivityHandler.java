@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 /**
  * This class handles all the messaging which comprises the state machine for
- * ocr_capture.
+ * capture.
  *
  * The code for this class was adapted from the ZXing project:
  * http://code.google.com/p/zxing/
@@ -118,8 +118,10 @@ final class CaptureActivityHandler extends Handler {
 		case R.id.ocr_decode_failed:
 			state = State.PREVIEW;
 			activity.setShutterButtonClickable(true);
+			// Toast toast = Toast.makeText(activity.getBaseContext(),
+			// "OCR failed. Please try again.", Toast.LENGTH_SHORT);
 			Toast toast = Toast.makeText(activity.getBaseContext(),
-					"OCR failed. Please try again.", Toast.LENGTH_SHORT);
+					"识别失败，请重试。", Toast.LENGTH_SHORT);
 			toast.setGravity(Gravity.TOP, 0, 0);
 			toast.show();
 			break;
