@@ -20,8 +20,6 @@ import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -265,14 +263,6 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String rootDir = prefs.getString(PreferencesActivity.KEY_STORAGE_DIR,
                 Constant.DEFAULT_STORAGE_DIR);
-        String subfolder = Helper.getMD5String(borrower.getName() + borrower.getId());
-        String idFile = rootDir + File.separator + subfolder + File.separator + "id.json";
-        boolean result = false;
-        try {
-            result = Helper.saveFile(idFile, borrower.toJson().toString().getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
-            Log.d(TAG, "Fail to save id file " + ex.getMessage());
-        }
-        return result;
+        return Helper.saveBorrower(borrower, rootDir);
     }
 }

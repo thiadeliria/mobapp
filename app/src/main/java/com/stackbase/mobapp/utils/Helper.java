@@ -6,14 +6,18 @@ import android.content.DialogInterface;
 import android.os.Environment;
 import android.util.Log;
 
+import com.stackbase.mobapp.objects.Borrower;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -23,6 +27,8 @@ import javax.crypto.spec.SecretKeySpec;
 abstract public class Helper {
 
     private static final String TAG = Helper.class.getSimpleName();
+
+    private static final String BORROWER_FILE_NAME = "id.json";
 
     /**
      * Displays an error message dialog box to the user on the UI thread.
@@ -280,5 +286,37 @@ abstract public class Helper {
          * @param message, error message
          */
         void onErrorTaken(String title, String message);
+    }
+
+    public static boolean saveBorrower(Borrower borrower, String rootDir) {
+        String subFolder = Helper.getMD5String(borrower.getName() + borrower.getId());
+        String idFile = rootDir + File.separator + subFolder + File.separator + BORROWER_FILE_NAME;
+        boolean result = false;
+        try {
+            result = Helper.saveFile(idFile, borrower.toJson().toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            Log.d(TAG, "Fail to save id file " + ex.getMessage());
+        }
+        return result;
+    }
+
+    public static ArrayList<Borrower> loadBorrowersInfo(String rootDir) {
+        ArrayList<Borrower> borrowers = new ArrayList<>();
+        File brDir = new File(rootDir);
+        if (brDir.isDirectory()) {
+            for (File file : brDir.listFiles()) {
+                if (isValidMD5(file.getName())) {
+                    borrowers.add(new Borrower(file.getAbsolutePath() + File.separator
+                            + BORROWER_FILE_NAME));
+                }
+            }
+        }
+        return borrowers;
+    }
+
+    // Delete all the borrower's files
+    public static void deleteBorrower(String idJsonFile) {
+        File file = new File(idJsonFile);
+        FileUtils.deleteDirectory(file.getParentFile());
     }
 }

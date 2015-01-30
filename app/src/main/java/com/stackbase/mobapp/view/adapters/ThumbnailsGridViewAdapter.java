@@ -1,4 +1,4 @@
-package com.stackbase.mobapp.view;
+package com.stackbase.mobapp.view.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,6 +19,7 @@ import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.activity.ThumbnailsActivity;
 import com.stackbase.mobapp.objects.Thumbnail;
 import com.stackbase.mobapp.utils.BitmapUtilities;
+import com.stackbase.mobapp.view.ImageItem;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class ThumbnailsGridViewAdapter extends ArrayAdapter<Thumbnail> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<Thumbnail> data = new ArrayList<Thumbnail>();
+    private ArrayList<Thumbnail> data = new ArrayList();
 
     private int width = 100;
     private int height = 120;

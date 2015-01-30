@@ -18,7 +18,7 @@ import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.objects.Thumbnail;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
-import com.stackbase.mobapp.view.ThumbnailsGridViewAdapter;
+import com.stackbase.mobapp.view.adapters.ThumbnailsGridViewAdapter;
 
 import java.io.File;
 import java.io.FilenameFilter;

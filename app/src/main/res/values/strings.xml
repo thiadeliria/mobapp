@@ -23,5 +23,9 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_thumbnails">ThumbnailsActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="delete">删除</string>
+    <string name="upload">上传</string>
+    <string name="loading">载入...</string>
+
 
 </resources>
