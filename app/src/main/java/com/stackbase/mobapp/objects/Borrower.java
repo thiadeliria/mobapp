@@ -2,13 +2,10 @@ package com.stackbase.mobapp.objects;
 
 import java.util.Date;
 
-/**
- * Created by gengjh on 1/18/15.
- */
 public class Borrower extends JSONObj {
     private String id = "";
     private String name = "";
-    private String sex = "";
+    private String gender = "";
     private String nation = "";
     private Date birthday = null;
     private String address = "";
@@ -24,7 +21,6 @@ public class Borrower extends JSONObj {
     }
 
     public Borrower(String jsonFile) {
-        this.jsonFile = jsonFile;
         this.fromJSON(jsonFile);
     }
 
@@ -44,12 +40,12 @@ public class Borrower extends JSONObj {
         this.name = name;
     }
 
-    public String getSex() {
-        return sex;
+    public String getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getNation() {

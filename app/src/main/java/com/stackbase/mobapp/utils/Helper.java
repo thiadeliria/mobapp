@@ -291,6 +291,7 @@ abstract public class Helper {
     public static boolean saveBorrower(Borrower borrower, String rootDir) {
         String subFolder = Helper.getMD5String(borrower.getName() + borrower.getId());
         String idFile = rootDir + File.separator + subFolder + File.separator + BORROWER_FILE_NAME;
+        borrower.setJsonFile(idFile);
         boolean result = false;
         try {
             result = Helper.saveFile(idFile, borrower.toJson().toString().getBytes("UTF-8"));

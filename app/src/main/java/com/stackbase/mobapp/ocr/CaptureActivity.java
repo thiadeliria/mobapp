@@ -17,9 +17,6 @@
 
 package com.stackbase.mobapp.ocr;
 
-import java.io.File;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -33,7 +30,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -62,9 +58,16 @@ import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.stackbase.mobapp.R;
+import com.stackbase.mobapp.activity.FinishListener;
+import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.camera.BeepManager;
 import com.stackbase.mobapp.ocr.camera.CameraManager;
-import com.stackbase.mobapp.ocr.camera.ShutterButton;
-import com.stackbase.mobapp.ocr.language.LanguageCodeHelper;
+import com.stackbase.mobapp.utils.LanguageCodeHelper;
+import com.stackbase.mobapp.view.ShutterButton;
+import com.stackbase.mobapp.view.ViewfinderView;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This activity opens the camera and does the actual scanning on a background
@@ -86,15 +89,6 @@ public final class CaptureActivity extends Activity implements
 	/** ISO 639-3 language code indicating the default recognition language. */
 	// public static final String DEFAULT_SOURCE_LANGUAGE_CODE = "eng";
 	public static final String DEFAULT_SOURCE_LANGUAGE_CODE = "chi_sim";
-
-	/**
-	 * ISO 639-1 language code indicating the default target language for
-	 * translation.
-	 */
-	public static final String DEFAULT_TARGET_LANGUAGE_CODE = "es";
-
-	/** The default online machine translation service to use. */
-	public static final String DEFAULT_TRANSLATOR = "Google Translate";
 
 	/** The default OCR engine to use. */
 	public static final String DEFAULT_OCR_ENGINE_MODE = "Tesseract";
@@ -248,7 +242,7 @@ public final class CaptureActivity extends Activity implements
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.capture);
+		setContentView(R.layout.ocr_capture);
 		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
 		cameraButtonView = findViewById(R.id.camera_button_view);
 		resultView = findViewById(R.id.result_view);
@@ -271,8 +265,6 @@ public final class CaptureActivity extends Activity implements
 
 		ocrResultView = (TextView) findViewById(R.id.ocr_result_text_view);
 		registerForContextMenu(ocrResultView);
-		translationView = (TextView) findViewById(R.id.translation_text_view);
-		registerForContextMenu(translationView);
 
 		progressView = (View) findViewById(R.id.indeterminate_progress_indicator_view);
 
@@ -663,13 +655,6 @@ public final class CaptureActivity extends Activity implements
 			startActivity(intent);
 			break;
 		}
-		case ABOUT_ID: {
-			intent = new Intent(this, HelpActivity.class);
-			intent.putExtra(HelpActivity.REQUESTED_PAGE_KEY,
-					HelpActivity.ABOUT_PAGE);
-			startActivity(intent);
-			break;
-		}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -688,7 +673,7 @@ public final class CaptureActivity extends Activity implements
 		// sourceLanguageCodeTranslation = LanguageCodeHelper
 		// .mapLanguageCode(languageCode);
 		sourceLanguageReadable = LanguageCodeHelper.getOcrLanguageName(this,
-				languageCode);
+                languageCode);
 		return true;
 	}
 
@@ -913,34 +898,6 @@ public final class CaptureActivity extends Activity implements
 		int scaledSize = Math.max(22, 32 - ocrResult.getText().length() / 4);
 		ocrResultTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
 
-		TextView translationLanguageLabelTextView = (TextView) findViewById(R.id.translation_language_label_text_view);
-		TextView translationLanguageTextView = (TextView) findViewById(R.id.translation_language_text_view);
-		TextView translationTextView = (TextView) findViewById(R.id.translation_text_view);
-		if (isTranslationActive) {
-			// Handle translation text fields
-			translationLanguageLabelTextView.setVisibility(View.VISIBLE);
-			// translationLanguageTextView.setText(targetLanguageReadable);
-			translationLanguageTextView
-					.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL),
-							Typeface.NORMAL);
-			translationLanguageTextView.setVisibility(View.VISIBLE);
-
-			// Activate/re-activate the indeterminate progress indicator
-			translationTextView.setVisibility(View.GONE);
-			progressView.setVisibility(View.VISIBLE);
-			setProgressBarVisibility(true);
-
-			// Get the translation asynchronously
-			// new TranslateAsyncTask(this, sourceLanguageCodeTranslation,
-			// targetLanguageCodeTranslation,
-			// ocrResult.getText()).execute();
-		} else {
-			translationLanguageLabelTextView.setVisibility(View.GONE);
-			translationLanguageTextView.setVisibility(View.GONE);
-			translationTextView.setVisibility(View.GONE);
-			progressView.setVisibility(View.GONE);
-			setProgressBarVisibility(false);
-		}
 		return true;
 	}
 
@@ -1010,9 +967,9 @@ public final class CaptureActivity extends Activity implements
 			// Color text delimited by '-' as red.
 			statusViewBottom.setTextSize(14);
 			CharSequence cs = setSpanBetweenTokens("OCR: "
-					+ sourceLanguageReadable
-					+ " - OCR failed - Time required: " + obj.getTimeRequired()
-					+ " ms", "-", new ForegroundColorSpan(0xFFFF0000));
+                    + sourceLanguageReadable
+                    + " - OCR failed - Time required: " + obj.getTimeRequired()
+                    + " ms", "-", new ForegroundColorSpan(0xFFFF0000));
 			statusViewBottom.setText(cs);
 		}
 	}
@@ -1239,24 +1196,7 @@ public final class CaptureActivity extends Activity implements
 			} else {
 				isFirstLaunch = false;
 			}
-			if (currentVersion > lastVersion) {
 
-				// Record the last version for which we last displayed the
-				// What's New (Help) page
-				prefs.edit()
-						.putInt(PreferencesActivity.KEY_HELP_VERSION_SHOWN,
-								currentVersion).commit();
-				Intent intent = new Intent(this, HelpActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-
-				// Show the default page on a clean install, and the what's new
-				// page on an upgrade.
-				String page = lastVersion == 0 ? HelpActivity.DEFAULT_PAGE
-						: HelpActivity.WHATS_NEW_PAGE;
-				intent.putExtra(HelpActivity.REQUESTED_PAGE_KEY, page);
-				startActivity(intent);
-				return true;
-			}
 		} catch (PackageManager.NameNotFoundException e) {
 			Log.w(TAG, e);
 		}
@@ -1381,21 +1321,6 @@ public final class CaptureActivity extends Activity implements
 		prefs.edit()
 				.putString(PreferencesActivity.KEY_SOURCE_LANGUAGE_PREFERENCE,
 						CaptureActivity.DEFAULT_SOURCE_LANGUAGE_CODE).commit();
-
-		// Translation
-		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_TOGGLE_TRANSLATION,
-						CaptureActivity.DEFAULT_TOGGLE_TRANSLATION).commit();
-
-		// Translation target language
-		prefs.edit()
-				.putString(PreferencesActivity.KEY_TARGET_LANGUAGE_PREFERENCE,
-						CaptureActivity.DEFAULT_TARGET_LANGUAGE_CODE).commit();
-
-		// Translator
-		prefs.edit()
-				.putString(PreferencesActivity.KEY_TRANSLATOR,
-						CaptureActivity.DEFAULT_TRANSLATOR).commit();
 
 		// OCR Engine
 		prefs.edit()

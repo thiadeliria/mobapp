@@ -32,7 +32,7 @@
                 android:src="@drawable/ic_user" />
             <EditText
                 android:id="@+id/nameEdit"
-                android:layout_width="156dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_toRightOf="@id/nameText"
                 android:background="@drawable/edittext_red"
@@ -41,7 +41,7 @@
                 android:textColorHint="#fffff9" />
             <RadioGroup
                 android:id="@+id/genderRadio"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/nameText"
                 android:layout_marginBottom="5dp"
@@ -54,7 +54,6 @@
                     android:layout_height="35dp"
                     android:layout_marginRight="10dp"
                     android:checked="true"
-                    android:inputType="text"
                     android:text=" 男"
                     android:textColor="#fffff9" />
                 <RadioButton
@@ -75,10 +74,10 @@
                 android:src="@drawable/ic_minzu" />
             <EditText
                 android:id="@+id/minzuEdit"
-                android:layout_width="156dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:layout_alignTop="@id/minzuText"
-                android:layout_toRightOf="@id/minzuText"
+                android:layout_alignTop="@+id/minzuText"
+                android:layout_toRightOf="@+id/minzuText"
                 android:background="@drawable/edittext_red"
                 android:hint=" 民族"
                 android:inputType="text"
@@ -93,9 +92,9 @@
                 android:src="@drawable/ic_number" />
             <EditText
                 android:id="@+id/idEdit"
-                android:layout_width="246dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:layout_alignTop="@id/idText"
+                android:layout_alignTop="@+id/idText"
                 android:layout_toRightOf="@id/idText"
                 android:background="@drawable/edittext_red"
                 android:hint=" 身份证"
@@ -111,7 +110,7 @@
                 android:src="@drawable/ic_bday" />
             <EditText
                 android:id="@+id/dobEdit"
-                android:layout_width="246dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_alignTop="@id/dobText"
                 android:layout_toRightOf="@id/dobText"
@@ -120,7 +119,7 @@
                 android:inputType="date"
                 android:textColorHint="#fffff9" />
             <ImageView
-                android:id="@+id/addText"
+                android:id="@+id/addrText"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_below="@id/dobText"
@@ -129,10 +128,10 @@
                 android:src="@drawable/ic_address" />
             <EditText
                 android:id="@+id/addrEdit"
-                android:layout_width="246dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:layout_alignTop="@id/addText"
-                android:layout_toRightOf="@id/addText"
+                android:layout_alignTop="@id/addrText"
+                android:layout_toRightOf="@id/addrText"
                 android:background="@drawable/edittext_red"
                 android:hint=" 住址"
                 android:inputType="textPostalAddress"
@@ -141,13 +140,13 @@
                 android:id="@+id/locationText"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_below="@id/addText"
+                android:layout_below="@id/addrText"
                 android:layout_marginBottom="9dp"
                 android:background="@drawable/labelicon_red"
                 android:src="@drawable/ic_location" />
             <EditText
                 android:id="@+id/locationEdit"
-                android:layout_width="246dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_alignTop="@id/locationText"
                 android:layout_toRightOf="@id/locationText"
@@ -156,63 +155,72 @@
                 android:inputType="text"
                 android:textColorHint="#fffff9" />
             <ImageView
-                android:id="@+id/expiryText"
+                android:id="@+id/expiryFromText"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_below="@id/locationText"
                 android:layout_marginBottom="9dp"
                 android:background="@drawable/labelicon_red"
                 android:src="@drawable/ic_validity" />
-            <EditText
-                android:id="@+id/expiryFromEdit"
-                android:layout_width="109dp"
+            <LinearLayout
+                android:id="@+id/expiryLayout"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:layout_alignTop="@id/expiryText"
-                android:layout_toRightOf="@id/expiryText"
-                android:background="@drawable/edittext_red"
-                android:hint=" 有效期"
-                android:inputType="date"
-                android:textColorHint="#fffff9" />
-            <TextView
-                android:id="@+id/dash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/expiryText"
-                android:layout_toRightOf="@id/expiryFromEdit"
-                android:paddingBottom="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:text=" - "
-                android:textColor="#fffff9"
-                android:textSize="25sp" />
-            <EditText
-                android:id="@+id/expiryToEdit"
-                android:layout_width="109dp"
-                android:layout_height="35dp"
-                android:layout_alignTop="@id/expiryText"
-                android:layout_toRightOf="@id/dash"
-                android:background="@drawable/edittext_red"
-                android:hint=" 有效期"
-                android:inputType="date"
-                android:textColorHint="#fffff9" />
+                android:layout_alignTop="@id/expiryFromText"
+                android:layout_toRightOf="@id/expiryFromText"
+                android:orientation="horizontal" >
+                <EditText
+                    android:id="@+id/expiryFromEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@drawable/edittext_red"
+                    android:hint=" 有效期"
+                    android:inputType="date"
+                    android:textColorHint="#fffff9" />
+                <TextView
+                    android:id="@+id/dash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="0.5"
+                    android:paddingBottom="5dp"
+                    android:text=" - "
+                    android:textColor="#fffff9"
+                    android:textSize="25sp" />
+                <EditText
+                    android:id="@+id/expiryToEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@drawable/edittext_red"
+                    android:hint=" 有效期"
+                    android:inputType="date"
+                    android:textColorHint="#fffff9" />
+            </LinearLayout>
         </RelativeLayout>
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/relativeLayout1"
-            android:layout_marginTop="10dp" >
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/relativeLayout1"
+            android:orientation="horizontal" >
             <ImageView
                 android:id="@+id/frontView"
-                android:layout_width="136dp"
-                android:layout_height="86dp"
-                android:layout_alignParentLeft="true"
-                android:background="@drawable/ic_id_front" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:paddingRight="5dp"
+                android:src="@drawable/ic_id_front" />
             <ImageView
                 android:id="@+id/backView"
-                android:layout_width="136dp"
-                android:layout_height="86dp"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/ic_id_back" />
-        </RelativeLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:paddingLeft="5dp"
+                android:src="@drawable/ic_id_back" />
+        </LinearLayout>
     </RelativeLayout>
 </ScrollView>

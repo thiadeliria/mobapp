@@ -4,7 +4,7 @@ import java.io.File;
 
 public final class FileUtils {
     public static boolean deleteDirectory(File directory) {
-        if (directory.exists()) {
+        if (directory != null && directory.exists()) {
             File[] files = directory.listFiles();
             if (null != files) {
                 for (int i = 0; i < files.length; i++) {

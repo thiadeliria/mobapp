@@ -24,13 +24,14 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.SurfaceHolder;
+
+import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.camera.AutoFocusManager;
+import com.stackbase.mobapp.camera.PlanarYUVLuminanceSource;
 
 import java.io.IOException;
 
-import com.stackbase.mobapp.ocr.PlanarYUVLuminanceSource;
-import com.stackbase.mobapp.ocr.PreferencesActivity;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The

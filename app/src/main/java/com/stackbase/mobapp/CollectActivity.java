@@ -242,7 +242,7 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
                 Borrower borrower = new Borrower();
                 borrower.setId(id);
                 borrower.setName(name);
-                borrower.setSex(sex);
+                borrower.setGender(sex);
                 borrower.setNation(nation);
                 borrower.setBirthday(dob);
                 borrower.setAddress(address);

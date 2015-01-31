@@ -19,6 +19,7 @@
 package com.stackbase.mobapp.view.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import java.util.List;
 
 public class SwipeListViewAdapter extends BaseAdapter {
 
+    private static final String TAG = SwipeListViewAdapter.class.getSimpleName();
     private List<SwipeListViewItem> data;
     private Context context;
 
@@ -86,6 +88,7 @@ public class SwipeListViewAdapter extends BaseAdapter {
         holder.delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "Delete: " + item.getIdFileName());
                 Helper.deleteBorrower(item.getIdFileName());
                 data.remove(item);
                 SwipeListViewAdapter.this.notifyDataSetChanged();
