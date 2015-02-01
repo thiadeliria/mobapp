@@ -40,7 +40,6 @@ android {
         baseName 'tess-two-native'
         extension 'jar'
         from(new File('libs')) { include '**/*.so'
-            exclude 'x86'
         }
         into 'lib/'
     }
