@@ -1,10 +1,12 @@
 package com.stackbase.mobapp.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.stackbase.mobapp.objects.Borrower;
 
@@ -319,5 +321,21 @@ abstract public class Helper {
     public static void deleteBorrower(String idJsonFile) {
         File file = new File(idJsonFile);
         FileUtils.deleteDirectory(file.getParentFile());
+    }
+
+    public static boolean checkSDCard() {
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void mMakeTextToast(Activity activity, String str, boolean isLong) {
+        if (isLong == true) {
+            Toast.makeText(activity, str, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(activity, str, Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -46,6 +46,9 @@ public class HomePage extends Activity implements Helper.ErrorCallback {
             setDefaultPreferences();
         }
 
+        if (!Helper.checkSDCard()) {
+            Helper.mMakeTextToast(this, getString(R.string.err_nosd), true);
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_home);
 

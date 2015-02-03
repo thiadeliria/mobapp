@@ -3,15 +3,7 @@
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pictureConfirmImageView"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        />
-
-    <SurfaceView android:id="@+id/preview_view"
+    <SurfaceView android:id="@+id/capture_preview_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true"
@@ -39,42 +31,6 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:visibility="gone"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="重拍"
-            android:id="@+id/recaptureTextView"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:scaleType="center"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:visibility="gone" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="使用照片"
-            android:id="@+id/savePictureTextView"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:scaleType="center"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:paddingBottom="10dp"
-            android:paddingRight="10dp"
-            />
 
     </RelativeLayout>
 
