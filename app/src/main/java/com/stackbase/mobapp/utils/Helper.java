@@ -49,6 +49,7 @@ abstract public class Helper {
         if (positiveListener != null) {
             dialog.setPositiveButton("确认", positiveListener);
         }
+        dialog.setCancelable(false);
         dialog.show();
     }
 

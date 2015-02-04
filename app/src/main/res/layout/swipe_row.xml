@@ -22,27 +22,27 @@
     >
     <LinearLayout
         android:id="@+id/back"
-        android:tag="back"
+        android:tag="front"
         style="@style/ListBackContent"
         >
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:id="@+id/delBorrowerBtn"
             style="@style/ListButtonAction"
             android:text="@string/delete"/>
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:id="@+id/uploadBorrowerBtn"
             style="@style/ListButtonAction"
             android:text="@string/upload"/>
     </LinearLayout>
     <RelativeLayout
-        android:orientation="vertical"
         android:id="@+id/front"
         android:tag="front"
-        style="@style/ListFrontContent">
+        style="@style/ListFrontContent"
+        >
         <ImageView
             style="@style/ListImage"
             android:id="@+id/borrowerHeadImage"/>

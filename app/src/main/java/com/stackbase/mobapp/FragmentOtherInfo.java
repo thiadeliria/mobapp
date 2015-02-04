@@ -48,7 +48,7 @@ public class FragmentOtherInfo extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         active = this.getActivity();
-        content = inflater.inflate(R.layout.fragment_otherinfo, null);
+        content = inflater.inflate(R.layout.fragment_otherinfo, container, false);
 
         creditReportBtn = (ImageButton) content.findViewById(R.id.creditReportBtn);
         marriageCertBtn = (ImageButton) content.findViewById(R.id.marriageCertBtn);

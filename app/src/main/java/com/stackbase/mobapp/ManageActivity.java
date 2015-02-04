@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
@@ -30,6 +31,7 @@ public class ManageActivity extends Activity {
     private static final String TAG = ManageActivity.class.getSimpleName();
 
     private static final int REQUEST_CODE_SETTINGS = 0;
+    private static final int REQUEST_ID_CHANGE = 1;
     private SwipeListViewAdapter adapter;
     private List<SwipeListViewItem> data;
     private SwipeListView swipeListView;
@@ -41,8 +43,9 @@ public class ManageActivity extends Activity {
         setContentView(R.layout.borrower_list);
         data = new ArrayList<SwipeListViewItem>();
         adapter = new SwipeListViewAdapter(this, data);
-        swipeListView = (SwipeListView) findViewById(R.id.example_lv_list);
+        swipeListView = (SwipeListView) findViewById(R.id.swipe_list_view);
         swipeListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            swipeListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 //                @Override
@@ -97,6 +100,17 @@ public class ManageActivity extends Activity {
             @Override
             public void onStartOpen(int position, int action, boolean right) {
                 Log.d(TAG, String.format("onStartOpen %d - action %d", position, action));
+                if (action == SwipeListView.SWIPE_ACTION_REVEAL) {
+                    // Set the offset
+                    View item = getItemViewByPosition(position, swipeListView);
+                    SwipeListViewAdapter.ViewHolder holder = (SwipeListViewAdapter.ViewHolder) item.getTag();
+                    float offset = holder.getDelBtn().getMeasuredWidth() + holder.getUploadBtn().getMeasuredWidth();
+                    if (right) {
+                        swipeListView.setOffsetRight(convertDpToPixel(offset));
+                    } else {
+                        swipeListView.setOffsetLeft(convertDpToPixel(offset));
+                    }
+                }
             }
 
             @Override
@@ -107,6 +121,12 @@ public class ManageActivity extends Activity {
             @Override
             public void onClickFrontView(int position) {
                 Log.d(TAG, String.format("onClickFrontView %d", position));
+                //Show the detail
+                Intent intent = new Intent();
+                intent.setClass(ManageActivity.this, CollectActivity.class);
+                String jsonFile = ((SwipeListViewItem) swipeListView.getAdapter().getItem(position)).getIdFileName();
+                intent.putExtra(Constant.INTENT_KEY_ID_JSON_FILENAME, jsonFile);
+                startActivityForResult(intent, REQUEST_ID_CHANGE);
             }
 
             @Override
@@ -129,6 +149,18 @@ public class ManageActivity extends Activity {
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.setCancelable(false);
         progressDialog.show();
+    }
+
+    public View getItemViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
     private void reload() {
@@ -176,6 +208,7 @@ public class ManageActivity extends Activity {
                 reload();
         }
     }
+
 
     public class ListAppTask extends AsyncTask<Void, Void, List<SwipeListViewItem>> {
         protected List<SwipeListViewItem> doInBackground(Void... args) {

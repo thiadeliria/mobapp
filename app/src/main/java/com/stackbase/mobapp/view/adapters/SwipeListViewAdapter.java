@@ -108,11 +108,19 @@ public class SwipeListViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    static class ViewHolder {
+    public static class ViewHolder {
         ImageView ivImage;
         TextView tvTitle;
         TextView tvDescription;
         Button delBtn;
         Button uploadBtn;
+
+        public Button getDelBtn() {
+            return delBtn;
+        }
+
+        public Button getUploadBtn() {
+            return uploadBtn;
+        }
     }
 }

@@ -2,35 +2,67 @@ package com.stackbase.mobapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 
+import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.ocr.CaptureActivity;
+import com.stackbase.mobapp.utils.Constant;
+import com.stackbase.mobapp.utils.Helper;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class FragmentIDCard extends Fragment {
-	View content;
+    private static final String TAG = FragmentIDCard.class.getSimpleName();
+    View content;
     ImageView frantIDPic;
     Activity active;
+    private EditText nameEdit;
+    private EditText idEdit;
+    private RadioButton maleButton;
+    private RadioButton femaleButton;
+    private EditText minzuEdit;
+    private EditText dobEdit;
+    private EditText addrEdit;
+    private EditText locationEdit;
+    private EditText expiryFromEdit;
+    private EditText expiryToEdit;
+    private SharedPreferences prefs;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		content = inflater.inflate(R.layout.fragment_idcard, null);
-		initView();
 
-		return content;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        content = inflater.inflate(R.layout.fragment_idcard, container, false);
+        initView();
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-	}
-	
-	private void initView() {
+        return content;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    private void initView() {
         active = this.getActivity();
         frantIDPic = (ImageView) content.findViewById(R.id.frontView);
 
@@ -45,5 +77,135 @@ public class FragmentIDCard extends Fragment {
         };
 
         frantIDPic.setOnClickListener(clickListener);
-	}
+
+        idEdit = (EditText) content.findViewById(R.id.idEdit);
+        nameEdit = (EditText) content.findViewById(R.id.nameEdit);
+        maleButton = (RadioButton) content.findViewById(R.id.maleButton);
+        femaleButton = (RadioButton) content.findViewById(R.id.femaleButton);
+        minzuEdit = (EditText) content.findViewById(R.id.minzuEdit);
+        dobEdit = (EditText) content.findViewById(R.id.dobEdit);
+        addrEdit = (EditText) content.findViewById(R.id.addrEdit);
+        locationEdit = (EditText) content.findViewById(R.id.locationEdit);
+        expiryFromEdit = (EditText) content.findViewById(R.id.expiryFromEdit);
+        expiryToEdit = (EditText) content.findViewById(R.id.expiryToEdit);
+
+        String jsonFile = active.getIntent().getStringExtra(Constant.INTENT_KEY_ID_JSON_FILENAME);
+        if (jsonFile != null && !jsonFile.equals("")) {
+            // This is from borrower list
+            Borrower borrower = new Borrower(jsonFile);
+            idEdit.setText(borrower.getId());
+            nameEdit.setText(borrower.getName());
+            if ("男".equals(borrower.getGender())) {
+                maleButton.setSelected(true);
+                femaleButton.setSelected(false);
+            } else {
+                maleButton.setSelected(false);
+                femaleButton.setSelected(true);
+            }
+            minzuEdit.setText(borrower.getNation());
+            if (borrower.getBirthday() != null) {
+                dobEdit.setText(String.valueOf(borrower.getBirthday()));
+            }
+            addrEdit.setText(borrower.getAddress());
+            locationEdit.setText(borrower.getLocation());
+            if (borrower.getExpiryFrom() != null) {
+                expiryFromEdit.setText(String.valueOf(borrower.getExpiryFrom()));
+            }
+            if (borrower.getExpiryTo() != null) {
+                expiryToEdit.setText(String.valueOf(borrower.getExpiryTo()));
+            }
+        }
+    }
+
+    public boolean validateIdCardInputs() {
+        String id = "";
+        String name = "";
+        String sex = "";
+        String nation = "";
+        Date dob = null;
+        String address = "";
+        String location = "";
+        Date expiryFrom = null;
+        Date expiryTo = null;
+        if (idEdit != null) {
+            id = idEdit.getText().toString();
+        }
+        if (nameEdit != null) {
+            name = nameEdit.getText().toString();
+        }
+        if (maleButton != null && !maleButton.isSelected()) {
+            sex = "男";
+        } else {
+            sex = "女";
+        }
+        if (minzuEdit != null) {
+            nation = minzuEdit.getText().toString();
+        }
+        if (dobEdit != null) {
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                dob = dateFormat.parse(dobEdit.getText().toString());
+            } catch (ParseException pe) {
+                Log.d(TAG, "unexpected date format: " + dobEdit.getText().toString()
+                        + " , should be 'yyyy/MM/dd'");
+                //TODO: need should error message here
+            }
+        }
+        if (addrEdit != null) {
+            address = addrEdit.getText().toString();
+        }
+        if (locationEdit != null) {
+            location = locationEdit.getText().toString();
+        }
+        if (expiryFromEdit != null) {
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                expiryFrom = dateFormat.parse(expiryFromEdit.getText().toString());
+            } catch (ParseException pe) {
+                Log.d(TAG, "unexpected date format: " + expiryFromEdit.getText().toString()
+                        + " , should be 'yyyy/MM/dd'");
+                //TODO: need should error message here
+            }
+        }
+        if (expiryToEdit != null) {
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                expiryTo = dateFormat.parse(expiryToEdit.getText().toString());
+            } catch (ParseException pe) {
+                Log.d(TAG, "unexpected date format: " + expiryToEdit.getText().toString()
+                        + " , should be 'yyyy/MM/dd'");
+                //TODO: need should error message here
+            }
+        }
+
+
+        if (id.equals("") || name.equals("")) {
+            if (nameEdit != null) {
+                nameEdit.requestFocus();
+            }
+            return false;
+        } else {
+            Borrower borrower = new Borrower();
+            borrower.setId(id);
+            borrower.setName(name);
+            borrower.setGender(sex);
+            borrower.setNation(nation);
+            borrower.setBirthday(dob);
+            borrower.setAddress(address);
+            borrower.setLocation(location);
+            borrower.setExpiryFrom(expiryFrom);
+            borrower.setExpiryTo(expiryTo);
+            active.getIntent().putExtra(Constant.INTENT_KEY_ID, id);
+            active.getIntent().putExtra(Constant.INTENT_KEY_NAME, name);
+            saveIDInfo(borrower);
+            return true;
+        }
+    }
+
+    private boolean saveIDInfo(Borrower borrower) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(content.getContext());
+        String rootDir = prefs.getString(PreferencesActivity.KEY_STORAGE_DIR,
+                Constant.DEFAULT_STORAGE_DIR);
+        return Helper.saveBorrower(borrower, rootDir);
+    }
 }
