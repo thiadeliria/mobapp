@@ -19,6 +19,7 @@ import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.utils.BitmapUtilities;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
+import com.stackbase.mobapp.view.adapters.IUpdateCallback;
 import com.stackbase.mobapp.view.adapters.SwipeListViewAdapter;
 import com.stackbase.mobapp.view.adapters.SwipeListViewItem;
 import com.stackbase.mobapp.view.swipelistview.BaseSwipeListViewListener;
@@ -27,7 +28,7 @@ import com.stackbase.mobapp.view.swipelistview.SwipeListView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageActivity extends Activity {
+public class ManageActivity extends Activity implements IUpdateCallback {
     private static final String TAG = ManageActivity.class.getSimpleName();
 
     private static final int REQUEST_CODE_SETTINGS = 0;
@@ -43,6 +44,7 @@ public class ManageActivity extends Activity {
         setContentView(R.layout.borrower_list);
         data = new ArrayList<SwipeListViewItem>();
         adapter = new SwipeListViewAdapter(this, data);
+        adapter.setUpdateCallback(this);
         swipeListView = (SwipeListView) findViewById(R.id.swipe_list_view);
         swipeListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
@@ -83,6 +85,8 @@ public class ManageActivity extends Activity {
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
             @Override
             public void onOpened(int position, boolean toRight) {
+                Log.d(TAG, String.format("onOpened %d - toRight %b", position, toRight));
+                setListOffset(position, toRight);
             }
 
             @Override
@@ -101,15 +105,7 @@ public class ManageActivity extends Activity {
             public void onStartOpen(int position, int action, boolean right) {
                 Log.d(TAG, String.format("onStartOpen %d - action %d", position, action));
                 if (action == SwipeListView.SWIPE_ACTION_REVEAL) {
-                    // Set the offset
-                    View item = getItemViewByPosition(position, swipeListView);
-                    SwipeListViewAdapter.ViewHolder holder = (SwipeListViewAdapter.ViewHolder) item.getTag();
-                    float offset = holder.getDelBtn().getMeasuredWidth() + holder.getUploadBtn().getMeasuredWidth();
-                    if (right) {
-                        swipeListView.setOffsetRight(convertDpToPixel(offset));
-                    } else {
-                        swipeListView.setOffsetLeft(convertDpToPixel(offset));
-                    }
+                    setListOffset(position, right);
                 }
             }
 
@@ -137,6 +133,7 @@ public class ManageActivity extends Activity {
             @Override
             public void onDismiss(int[] reverseSortedPositions) {
                 for (int position : reverseSortedPositions) {
+                    Log.d(TAG, String.format("onDismiss %d", position));
                     data.remove(position);
                 }
                 adapter.notifyDataSetChanged();
@@ -151,7 +148,20 @@ public class ManageActivity extends Activity {
         progressDialog.show();
     }
 
-    public View getItemViewByPosition(int pos, ListView listView) {
+    private void setListOffset(int position, boolean toRight) {
+        // Set the offset
+        View item = getItemViewByPosition(position, swipeListView);
+        SwipeListViewAdapter.ViewHolder holder = (SwipeListViewAdapter.ViewHolder) item.getTag();
+        float offset = holder.getDelBtn().getMeasuredWidth() + holder.getUploadBtn().getMeasuredWidth();
+        if (toRight) {
+            swipeListView.setOffsetRight(convertDpToPixel(offset));
+        } else {
+            swipeListView.setOffsetLeft(convertDpToPixel(offset));
+        }
+
+    }
+
+    private View getItemViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
 
@@ -220,6 +230,54 @@ public class ManageActivity extends Activity {
                     adapter.notifyDataSetChanged();
                 }
         }
+    }
+
+    void updateProgressInUiThread(SwipeListViewItem model,int progress,int position){
+        updateProgressPartly(progress,position);
+    }
+
+    private void updateProgressPartly(int progress,int position){
+        int firstVisiblePosition = swipeListView.getFirstVisiblePosition();
+        int lastVisiblePosition = swipeListView.getLastVisiblePosition();
+        if(position>=firstVisiblePosition && position<=lastVisiblePosition){
+            View view = swipeListView.getChildAt(position - firstVisiblePosition);
+            if(view.getTag() instanceof SwipeListViewAdapter.ViewHolder){
+                SwipeListViewAdapter.ViewHolder vh = (SwipeListViewAdapter.ViewHolder)view.getTag();
+                vh.getUploadPB().setProgress(progress);
+            }
+        }
+    }
+
+    @Override
+    public int startProgress(final int position, final SwipeListViewItem item) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0;i<=100;i++){
+                    updateProgressInUiThread(item, i, position);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "Upload borrower error", e);
+                    }
+                }
+                dismiss(position);
+                //TODO: or send message to notification center.
+                Helper.mMakeTextToast(ManageActivity.this, getString(R.string.upload_finished), true);
+            }
+        }).start();
+
+        //TODO: need return the current progress when fail to upload all the borrower's info
+        return 0;
+    }
+
+    @Override
+    public void dismiss(int position) {
+        SwipeListViewItem item = (SwipeListViewItem) swipeListView.getAdapter().getItem(position);
+        Log.d(TAG, "Delete: " + item.getIdFileName());
+        Helper.deleteBorrower(item.getIdFileName());
+        data.remove(item);
+        swipeListView.dismiss(position);
     }
 
 

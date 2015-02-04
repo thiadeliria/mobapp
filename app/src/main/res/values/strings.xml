@@ -29,5 +29,7 @@
     <string name="err_nosd">没有检测到存储卡, 请确认存储卡已经正确安装.</string>
     <string name="err_title">错误</string>
     <string name="err_id_needed">必须输入姓名和身份证号码.</string>
+    <string name="upload_finished">借款人‘%s’信息上传完毕.</string>
+    <string name="upload_fail">上传借款人‘%s’信息失败,请重试或检查服务器连接是否正常.</string>
 
 </resources>

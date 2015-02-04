@@ -59,5 +59,21 @@
             android:layout_below="@id/borrowerNameText"
             style="@style/ListDescription"
             android:id="@+id/borrowerIdText"/>
+        <ProgressBar
+            android:id="@+id/uploadProgressBar"
+            style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/borrowerHeadImage"
+            android:layout_below="@id/borrowerIdText"
+            android:background="@android:color/background_light"
+            android:max="100"
+            android:progress="0"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 </FrameLayout>

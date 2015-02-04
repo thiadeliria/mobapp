@@ -19,17 +19,16 @@
 package com.stackbase.mobapp.view.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.stackbase.mobapp.R;
-import com.stackbase.mobapp.utils.Helper;
 import com.stackbase.mobapp.view.swipelistview.SwipeListView;
 
 import java.util.List;
@@ -39,10 +38,19 @@ public class SwipeListViewAdapter extends BaseAdapter {
     private static final String TAG = SwipeListViewAdapter.class.getSimpleName();
     private List<SwipeListViewItem> data;
     private Context context;
+    private IUpdateCallback updateCallback;
 
     public SwipeListViewAdapter(Context context, List<SwipeListViewItem> data) {
         this.context = context;
         this.data = data;
+    }
+
+    public IUpdateCallback getUpdateCallback() {
+        return updateCallback;
+    }
+
+    public void setUpdateCallback(IUpdateCallback updateCallback) {
+        this.updateCallback = updateCallback;
     }
 
     @Override
@@ -63,7 +71,7 @@ public class SwipeListViewAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final SwipeListViewItem item = getItem(position);
-        ViewHolder holder;
+        final ViewHolder holder;
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = li.inflate(R.layout.swipe_row, parent, false);
@@ -73,6 +81,7 @@ public class SwipeListViewAdapter extends BaseAdapter {
             holder.tvDescription = (TextView) convertView.findViewById(R.id.borrowerIdText);
             holder.delBtn = (Button) convertView.findViewById(R.id.delBorrowerBtn);
             holder.uploadBtn = (Button) convertView.findViewById(R.id.uploadBorrowerBtn);
+            holder.uploadPB = (ProgressBar) convertView.findViewById(R.id.uploadProgressBar);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -88,20 +97,15 @@ public class SwipeListViewAdapter extends BaseAdapter {
         holder.delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Delete: " + item.getIdFileName());
-                Helper.deleteBorrower(item.getIdFileName());
-                data.remove(item);
-                SwipeListViewAdapter.this.notifyDataSetChanged();
+                updateCallback.dismiss(position);
             }
         });
 
         holder.uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO upload borrower's files
-//                Helper.deleteBorrower(item.getIdFileName());
-//                data.remove(item);
-//                SwipeListViewAdapter.this.notifyDataSetChanged();
+                holder.getUploadPB().setVisibility(View.VISIBLE);
+                updateCallback.startProgress(position, item);
             }
         });
 
@@ -114,6 +118,7 @@ public class SwipeListViewAdapter extends BaseAdapter {
         TextView tvDescription;
         Button delBtn;
         Button uploadBtn;
+        ProgressBar uploadPB;
 
         public Button getDelBtn() {
             return delBtn;
@@ -122,5 +127,10 @@ public class SwipeListViewAdapter extends BaseAdapter {
         public Button getUploadBtn() {
             return uploadBtn;
         }
+
+        public ProgressBar getUploadPB() {
+            return uploadPB;
+        }
     }
+
 }

@@ -646,7 +646,8 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 backView.setVisibility(View.VISIBLE);
             }
             frontView.setClickable(opened.get(downPosition));
-            frontView.setLongClickable(opened.get(downPosition));
+//            frontView.setLongClickable(opened.get(downPosition));
+            frontView.setLongClickable(false);
             frontView = null;
             backView = null;
             downPosition = ListView.INVALID_POSITION;
@@ -746,6 +747,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        Log.d("aaaaa", "onTouch: " + MotionEventCompat.getActionMasked(motionEvent));
         if (!isSwipeEnabled()) {
             return false;
         }
@@ -784,7 +786,8 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                         downPosition = childPosition;
 
                         frontView.setClickable(!opened.get(downPosition));
-                        frontView.setLongClickable(!opened.get(downPosition));
+//                        frontView.setLongClickable(!opened.get(downPosition));
+                        frontView.setLongClickable(false);
 
                         velocityTracker = VelocityTracker.obtain();
                         velocityTracker.addMovement(motionEvent);
