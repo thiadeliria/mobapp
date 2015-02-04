@@ -75,6 +75,7 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
             public void onPageSelected(int position) {
                 if (position == 1) {
                     validateID();
+                    Helper.hideSoftKeyboard(CollectActivity.this);
                 }
                 actionBar.setSelectedNavigationItem(position);
             }

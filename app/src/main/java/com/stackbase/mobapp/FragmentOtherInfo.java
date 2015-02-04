@@ -27,6 +27,7 @@ public class FragmentOtherInfo extends Fragment {
     ImageButton contractBtn;
 
     private SharedPreferences prefs;
+    private static final String TAG = FragmentOtherInfo.class.getSimpleName();
 
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag, Class<?> viewType) {
         ArrayList<View> views = new ArrayList<View>();

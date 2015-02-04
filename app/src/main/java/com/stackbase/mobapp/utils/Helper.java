@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.stackbase.mobapp.objects.Borrower;
@@ -337,6 +338,13 @@ abstract public class Helper {
             Toast.makeText(activity, str, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(activity, str, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        if (activity.getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
     }
 }
