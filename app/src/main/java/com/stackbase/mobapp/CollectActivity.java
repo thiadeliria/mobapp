@@ -2,8 +2,10 @@ package com.stackbase.mobapp;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
+import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 
 import java.util.ArrayList;
@@ -32,11 +35,9 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return frags.size();
         }
     };
-    private boolean isValidInputs = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,18 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
         Log.d(TAG, "onTabUnselected: " + tab.getPosition());
     }
 
+    @Override
+    public void finish() {
+        Log.d(TAG, "finish");
+        if (idCard.isFromManage()) {
+            idCard.validateIdCardInputs();
+            Intent intent = new Intent();
+            intent.putExtra(Constant.INTENT_KEY_BORROWER_OBJ, idCard.getBorrower());
+            this.setResult(Activity.RESULT_OK, intent);
+        }
+        super.finish();
+    }
+
     private void validateID() {
         if (!idCard.validateIdCardInputs()) {
             DialogInterface.OnClickListener alertListener = new DialogInterface.OnClickListener() {
@@ -117,7 +130,8 @@ public class CollectActivity extends FragmentActivity implements ActionBar.TabLi
                     actionBar.selectTab(actionBar.getTabAt(0));
                 }
             };
-            Helper.showErrorMessage(CollectActivity.this, "错误", "必须输入姓名和身份证号码.",
+            Helper.showErrorMessage(CollectActivity.this, getString(R.string.err_title),
+                    getString(R.string.err_id_needed),
                     null, alertListener);
         }
 

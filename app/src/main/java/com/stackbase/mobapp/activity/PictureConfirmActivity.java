@@ -33,6 +33,7 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
     private TextView savePictureTextView;
     private TextView recaptureTextView;
     private ImageView pictureConfirmImageView;
+    private String tempImageFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
     }
 
     private void initImageView() {
-        String tempImageFile = getIntent().getStringExtra(MediaStore.EXTRA_OUTPUT);
+        tempImageFile = getIntent().getStringExtra(MediaStore.EXTRA_OUTPUT);
         if (tempImageFile != null) {
             byte[] data = Helper.loadFile(tempImageFile);
             int screenWidth = getResources().getDisplayMetrics().widthPixels;
@@ -133,7 +134,6 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
         return fileName;
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -146,8 +146,17 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
                 this.setResult(Activity.RESULT_OK, intent);
                 break;
         }
-        finish();
         releaseBitmap();
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (tempImageFile != null && !tempImageFile.equals("")) {
+            File file = new File(tempImageFile);
+            file.delete();
+        }
+        super.onDestroy();
     }
 
     private File getOutputMediaFile() {

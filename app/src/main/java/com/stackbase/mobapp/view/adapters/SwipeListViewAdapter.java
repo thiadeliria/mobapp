@@ -78,7 +78,7 @@ public class SwipeListViewAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ((SwipeListView)parent).recycle(convertView, position);
+        ((SwipeListView) parent).recycle(convertView, position);
 
         holder.ivImage.setImageDrawable(item.getIcon());
         holder.tvTitle.setText(item.getName());

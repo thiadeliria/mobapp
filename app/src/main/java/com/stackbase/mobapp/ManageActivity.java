@@ -155,7 +155,7 @@ public class ManageActivity extends Activity {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
 
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+        if (pos < firstListItemPosition || pos > lastListItemPosition) {
             return listView.getAdapter().getView(pos, null, listView);
         } else {
             final int childIndex = pos - firstListItemPosition;
@@ -201,11 +201,24 @@ public class ManageActivity extends Activity {
 //        return handled;
 //    }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case REQUEST_CODE_SETTINGS:
                 reload();
+                break;
+            case REQUEST_ID_CHANGE:
+                Borrower borrower = (Borrower) intent.getSerializableExtra(Constant.INTENT_KEY_BORROWER_OBJ);
+                if (borrower != null) {
+                    // Do not allow to change the id and name
+//                    for (SwipeListViewItem item : data) {
+//                        if (item.getId().equals(borrower.getId())) {
+//                            item.setName(borrower.getName());
+//                            break;
+//                        }
+//                    }
+                    adapter.notifyDataSetChanged();
+                }
         }
     }
 

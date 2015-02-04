@@ -13,10 +13,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-abstract public class JSONObj {
+abstract public class JSONObj implements Serializable {
     private static final String TAG = JSONObj.class.getSimpleName();
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
@@ -79,4 +80,10 @@ abstract public class JSONObj {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return this.toJson().toJSONString();
+    }
+
 }

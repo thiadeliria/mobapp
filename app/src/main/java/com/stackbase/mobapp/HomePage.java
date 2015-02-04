@@ -54,7 +54,8 @@ public class HomePage extends Activity implements Helper.ErrorCallback {
                     finish();
                 }
             };
-            Helper.showErrorMessage(this, "错误", getString(R.string.err_nosd), null, alertListener);
+            Helper.showErrorMessage(this, getString(R.string.err_title), getString(R.string.err_nosd),
+                    null, alertListener);
 
         }
         requestWindowFeature(Window.FEATURE_NO_TITLE);

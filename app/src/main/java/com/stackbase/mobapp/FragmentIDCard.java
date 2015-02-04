@@ -41,7 +41,8 @@ public class FragmentIDCard extends Fragment {
     private EditText expiryFromEdit;
     private EditText expiryToEdit;
     private SharedPreferences prefs;
-
+    private boolean isFromManage = false;
+    private Borrower borrower;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +61,14 @@ public class FragmentIDCard extends Fragment {
     public void onStop() {
         super.onStop();
 
+    }
+
+    public boolean isFromManage() {
+        return isFromManage;
+    }
+
+    public Borrower getBorrower() {
+        return borrower;
     }
 
     private void initView() {
@@ -89,18 +98,23 @@ public class FragmentIDCard extends Fragment {
         expiryFromEdit = (EditText) content.findViewById(R.id.expiryFromEdit);
         expiryToEdit = (EditText) content.findViewById(R.id.expiryToEdit);
 
+        idEdit.setEnabled(true);
+        nameEdit.setEnabled(true);
         String jsonFile = active.getIntent().getStringExtra(Constant.INTENT_KEY_ID_JSON_FILENAME);
         if (jsonFile != null && !jsonFile.equals("")) {
-            // This is from borrower list
-            Borrower borrower = new Borrower(jsonFile);
+            isFromManage = true;
+            // This is from borrower manage list
+            borrower = new Borrower(jsonFile);
             idEdit.setText(borrower.getId());
+            idEdit.setEnabled(false);
             nameEdit.setText(borrower.getName());
+            nameEdit.setEnabled(false);
             if ("男".equals(borrower.getGender())) {
-                maleButton.setSelected(true);
-                femaleButton.setSelected(false);
+                maleButton.setChecked(true);
+                femaleButton.setChecked(false);
             } else {
-                maleButton.setSelected(false);
-                femaleButton.setSelected(true);
+                maleButton.setChecked(false);
+                femaleButton.setChecked(true);
             }
             minzuEdit.setText(borrower.getNation());
             if (borrower.getBirthday() != null) {
@@ -120,7 +134,7 @@ public class FragmentIDCard extends Fragment {
     public boolean validateIdCardInputs() {
         String id = "";
         String name = "";
-        String sex = "";
+        String gender = "";
         String nation = "";
         Date dob = null;
         String address = "";
@@ -133,10 +147,10 @@ public class FragmentIDCard extends Fragment {
         if (nameEdit != null) {
             name = nameEdit.getText().toString();
         }
-        if (maleButton != null && !maleButton.isSelected()) {
-            sex = "男";
+        if (maleButton != null && maleButton.isChecked()) {
+            gender = "男";
         } else {
-            sex = "女";
+            gender = "女";
         }
         if (minzuEdit != null) {
             nation = minzuEdit.getText().toString();
@@ -185,10 +199,12 @@ public class FragmentIDCard extends Fragment {
             }
             return false;
         } else {
-            Borrower borrower = new Borrower();
+            if (borrower == null) {
+                borrower = new Borrower();
+            }
             borrower.setId(id);
             borrower.setName(name);
-            borrower.setGender(sex);
+            borrower.setGender(gender);
             borrower.setNation(nation);
             borrower.setBirthday(dob);
             borrower.setAddress(address);

@@ -48,5 +48,5 @@ abstract public class Constant {
     public static final String INTENT_KEY_PIC_FOLDER = "INTENT_KEY_PIC_FOLDER";
     public static final String INTENT_KEY_PIC_FULLNAME = "INTENT_KEY_PIC_FULLNAME";
     public static final String INTENT_KEY_ID_JSON_FILENAME = "INTENT_KEY_ID_JSON_FILENAME";
-
+    public static final String INTENT_KEY_BORROWER_OBJ = "INTENT_KEY_BORROWER_OBJ";
 }
