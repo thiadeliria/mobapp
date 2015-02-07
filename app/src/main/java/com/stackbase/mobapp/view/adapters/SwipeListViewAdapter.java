@@ -18,7 +18,9 @@
 
 package com.stackbase.mobapp.view.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +41,12 @@ public class SwipeListViewAdapter extends BaseAdapter {
     private List<SwipeListViewItem> data;
     private Context context;
     private IUpdateCallback updateCallback;
+    private LayoutInflater li;
 
     public SwipeListViewAdapter(Context context, List<SwipeListViewItem> data) {
         this.context = context;
         this.data = data;
+
     }
 
     public IUpdateCallback getUpdateCallback() {
@@ -73,12 +77,12 @@ public class SwipeListViewAdapter extends BaseAdapter {
         final SwipeListViewItem item = getItem(position);
         final ViewHolder holder;
         if (convertView == null) {
-            LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = li.inflate(R.layout.swipe_row, parent, false);
+            li = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            convertView = li.inflate(R.layout.swipe_row, null);
             holder = new ViewHolder();
             holder.ivImage = (ImageView) convertView.findViewById(R.id.borrowerHeadImage);
-            holder.tvTitle = (TextView) convertView.findViewById(R.id.borrowerNameText);
-            holder.tvDescription = (TextView) convertView.findViewById(R.id.borrowerIdText);
+            holder.title = (TextView) convertView.findViewById(R.id.borrowerNameText);
+            holder.description = (TextView) convertView.findViewById(R.id.borrowerIdText);
             holder.delBtn = (Button) convertView.findViewById(R.id.delBorrowerBtn);
             holder.uploadBtn = (Button) convertView.findViewById(R.id.uploadBorrowerBtn);
             holder.uploadPB = (ProgressBar) convertView.findViewById(R.id.uploadProgressBar);
@@ -86,14 +90,22 @@ public class SwipeListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
         ((SwipeListView) parent).recycle(convertView, position);
 
         holder.ivImage.setImageDrawable(item.getIcon());
-        holder.tvTitle.setText(item.getName());
-        holder.tvDescription.setText(item.getId());
-
-
+        holder.title.setText(item.getName());
+        holder.description.setText(item.getId());
+        if (item.isUploading() || item.getUploadedProgress() == 100) {
+            holder.uploadBtn.setVisibility(View.GONE);
+            holder.delBtn.setVisibility(View.GONE);
+            holder.uploadPB.setVisibility(View.VISIBLE);
+            holder.uploadPB.setProgress(item.getUploadedProgress());
+        } else {
+            holder.uploadBtn.setVisibility(View.VISIBLE);
+            holder.delBtn.setVisibility(View.VISIBLE);
+            holder.uploadPB.setVisibility(View.GONE);
+        }
+        holder.uploadPB.setProgress(item.getCurrentProgress());
         holder.delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,18 +116,19 @@ public class SwipeListViewAdapter extends BaseAdapter {
         holder.uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.getUploadPB().setVisibility(View.VISIBLE);
-                updateCallback.startProgress(position, item);
+                updateCallback.startProgress(item);
             }
         });
+        Log.d(TAG, String.format("test--%d--%s--%s--%s---", position, holder.title.getText(), holder.title,
+                holder.uploadPB));
 
         return convertView;
     }
 
     public static class ViewHolder {
         ImageView ivImage;
-        TextView tvTitle;
-        TextView tvDescription;
+        TextView title;
+        TextView description;
         Button delBtn;
         Button uploadBtn;
         ProgressBar uploadPB;
@@ -130,6 +143,10 @@ public class SwipeListViewAdapter extends BaseAdapter {
 
         public ProgressBar getUploadPB() {
             return uploadPB;
+        }
+
+        public TextView getTitle() {
+            return title;
         }
     }
 

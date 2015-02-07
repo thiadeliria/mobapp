@@ -15,6 +15,7 @@ public class Borrower extends JSONObj {
     private String idPicture1 = "";
     private String idPicture2 = "";
     private String jsonFile = "";
+    private int uploadedProgress = 0;
 
     public Borrower() {
         super();
@@ -118,5 +119,13 @@ public class Borrower extends JSONObj {
 
     public void setJsonFile(String jsonFile) {
         this.jsonFile = jsonFile;
+    }
+
+    public int getUploadedProgress() {
+        return uploadedProgress;
+    }
+
+    public void setUploadedProgress(int uploadedProgress) {
+        this.uploadedProgress = uploadedProgress;
     }
 }

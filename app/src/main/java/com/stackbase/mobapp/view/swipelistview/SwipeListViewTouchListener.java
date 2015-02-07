@@ -747,7 +747,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        Log.d("aaaaa", "onTouch: " + MotionEventCompat.getActionMasked(motionEvent));
         if (!isSwipeEnabled()) {
             return false;
         }

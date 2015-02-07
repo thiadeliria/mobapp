@@ -49,4 +49,9 @@ abstract public class Constant {
     public static final String INTENT_KEY_PIC_FULLNAME = "INTENT_KEY_PIC_FULLNAME";
     public static final String INTENT_KEY_ID_JSON_FILENAME = "INTENT_KEY_ID_JSON_FILENAME";
     public static final String INTENT_KEY_BORROWER_OBJ = "INTENT_KEY_BORROWER_OBJ";
+
+    public static final int MESSAGE_KEY_GUIUPDATEIDENTIFIER = 100;
+    public static final String MESSAGE_KEY_PROGRESS_BAR_POSITION = "MESSAGE_KEY_PROGRESS_BAR_POSITION";
+    public static final String MESSAGE_KEY_PROGRESS_BAR_PROGRESS = "MESSAGE_KEY_PROGRESS_BAR_PROGRESS";
+    public static final String MESSAGE_KEY_PROGRESS_BORROWER_NAME = "MESSAGE_KEY_PROGRESS_BORROWER_NAME";
 }

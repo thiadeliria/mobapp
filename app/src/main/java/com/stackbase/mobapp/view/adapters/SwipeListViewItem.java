@@ -30,6 +30,12 @@ public class SwipeListViewItem {
 
     private String idFileName;
 
+    private int uploadedProgress;
+
+    private int currentProgress;
+
+    private boolean isUploading;
+
     public String getIdFileName() {
         return idFileName;
     }
@@ -60,5 +66,30 @@ public class SwipeListViewItem {
 
     public void setIcon(Drawable icon) {
         this.icon = icon;
+    }
+
+
+    public int getUploadedProgress() {
+        return uploadedProgress;
+    }
+
+    public void setUploadedProgress(int uploadedProgress) {
+        this.uploadedProgress = uploadedProgress;
+    }
+
+    public boolean isUploading() {
+        return isUploading;
+    }
+
+    public void setUploading(boolean isUploading) {
+        this.isUploading = isUploading;
+    }
+
+    public int getCurrentProgress() {
+        return currentProgress;
+    }
+
+    public void setCurrentProgress(int currentProgress) {
+        this.currentProgress = currentProgress;
     }
 }

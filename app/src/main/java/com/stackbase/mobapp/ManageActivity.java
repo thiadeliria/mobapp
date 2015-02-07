@@ -1,5 +1,6 @@
 package com.stackbase.mobapp;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,11 +8,13 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
@@ -25,8 +28,12 @@ import com.stackbase.mobapp.view.adapters.SwipeListViewItem;
 import com.stackbase.mobapp.view.swipelistview.BaseSwipeListViewListener;
 import com.stackbase.mobapp.view.swipelistview.SwipeListView;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class ManageActivity extends Activity implements IUpdateCallback {
     private static final String TAG = ManageActivity.class.getSimpleName();
@@ -37,16 +44,29 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     private List<SwipeListViewItem> data;
     private SwipeListView swipeListView;
     private ProgressDialog progressDialog;
+    private int mScrollState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.borrower_list);
-        data = new ArrayList<SwipeListViewItem>();
+        data = new ArrayList<>();
         adapter = new SwipeListViewAdapter(this, data);
         adapter.setUpdateCallback(this);
         swipeListView = (SwipeListView) findViewById(R.id.swipe_list_view);
-        swipeListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+//        swipeListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        swipeListView.setSwipeCloseAllItemsWhenMoveList(true);
+        swipeListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                mScrollState = scrollState;
+            }
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                swipeListView.closeOpenedItems();
+            }
+        });
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            swipeListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -117,12 +137,14 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             @Override
             public void onClickFrontView(int position) {
                 Log.d(TAG, String.format("onClickFrontView %d", position));
-                //Show the detail
-                Intent intent = new Intent();
-                intent.setClass(ManageActivity.this, CollectActivity.class);
-                String jsonFile = ((SwipeListViewItem) swipeListView.getAdapter().getItem(position)).getIdFileName();
-                intent.putExtra(Constant.INTENT_KEY_ID_JSON_FILENAME, jsonFile);
-                startActivityForResult(intent, REQUEST_ID_CHANGE);
+                if (!data.get(position).isUploading()) {
+                    //Show the detail
+                    Intent intent = new Intent();
+                    intent.setClass(ManageActivity.this, CollectActivity.class);
+                    String jsonFile = ((SwipeListViewItem) swipeListView.getAdapter().getItem(position)).getIdFileName();
+                    intent.putExtra(Constant.INTENT_KEY_ID_JSON_FILENAME, jsonFile);
+                    startActivityForResult(intent, REQUEST_ID_CHANGE);
+                }
             }
 
             @Override
@@ -152,11 +174,16 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         // Set the offset
         View item = getItemViewByPosition(position, swipeListView);
         SwipeListViewAdapter.ViewHolder holder = (SwipeListViewAdapter.ViewHolder) item.getTag();
-        float offset = holder.getDelBtn().getMeasuredWidth() + holder.getUploadBtn().getMeasuredWidth();
+        float offset = convertDpToPixel(holder.getDelBtn().getMeasuredWidth()
+                + holder.getUploadBtn().getMeasuredWidth());
+        SwipeListViewItem swipeListViewItem = data.get(position);
+        if (swipeListViewItem.isUploading() || swipeListViewItem.getUploadedProgress() == 100) {
+            offset = 1;
+        }
         if (toRight) {
-            swipeListView.setOffsetRight(convertDpToPixel(offset));
+            swipeListView.setOffsetRight(offset);
         } else {
-            swipeListView.setOffsetLeft(convertDpToPixel(offset));
+            swipeListView.setOffsetLeft(offset);
         }
 
     }
@@ -232,52 +259,26 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         }
     }
 
-    void updateProgressInUiThread(SwipeListViewItem model,int progress,int position){
-        updateProgressPartly(progress,position);
-    }
-
-    private void updateProgressPartly(int progress,int position){
-        int firstVisiblePosition = swipeListView.getFirstVisiblePosition();
-        int lastVisiblePosition = swipeListView.getLastVisiblePosition();
-        if(position>=firstVisiblePosition && position<=lastVisiblePosition){
-            View view = swipeListView.getChildAt(position - firstVisiblePosition);
-            if(view.getTag() instanceof SwipeListViewAdapter.ViewHolder){
-                SwipeListViewAdapter.ViewHolder vh = (SwipeListViewAdapter.ViewHolder)view.getTag();
-                vh.getUploadPB().setProgress(progress);
-            }
-        }
-    }
-
     @Override
-    public int startProgress(final int position, final SwipeListViewItem item) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for(int i = 0;i<=100;i++){
-                    updateProgressInUiThread(item, i, position);
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "Upload borrower error", e);
-                    }
-                }
-                dismiss(position);
-                //TODO: or send message to notification center.
-                Helper.mMakeTextToast(ManageActivity.this, getString(R.string.upload_finished), true);
-            }
-        }).start();
-
-        //TODO: need return the current progress when fail to upload all the borrower's info
-        return 0;
+    public void startProgress(SwipeListViewItem item) {
+        swipeListView.closeAnimate(data.indexOf(item));
+        UploadBorrowerInfo task = new UploadBorrowerInfo(item);
+        task.execute();
     }
 
     @Override
     public void dismiss(int position) {
-        SwipeListViewItem item = (SwipeListViewItem) swipeListView.getAdapter().getItem(position);
-        Log.d(TAG, "Delete: " + item.getIdFileName());
+        // delete the borrower
+        SwipeListViewItem item = data.get(position);
+        Log.d(TAG, String.format("Delete: %s -- %s - %s - %s", position, item.getId(), item.getName(),
+                item.getIdFileName()));
         Helper.deleteBorrower(item.getIdFileName());
-        data.remove(item);
         swipeListView.dismiss(position);
+    }
+
+    public void showMessage(String msg) {
+        //TODO: need send this message to message center.
+        Helper.mMakeTextToast(this, msg, true);
     }
 
 
@@ -292,6 +293,9 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                 item.setName(borrower.getName());
                 item.setId(borrower.getId());
                 item.setIdFileName(borrower.getJsonFile());
+                item.setUploadedProgress(borrower.getUploadedProgress());
+                item.setCurrentProgress(borrower.getUploadedProgress());
+                item.setUploading(false);
                 Bitmap icon = null;
                 if (borrower.getIdPicture1() != null && !borrower.getIdPicture1().equals("")) {
                     icon = BitmapUtilities.getBitmapThumbnail(BitmapUtilities.getBitmap(
@@ -304,6 +308,13 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                 }
                 data.add(item);
             }
+            // sort by name
+            Collections.sort(data, new Comparator<SwipeListViewItem>() {
+                @Override
+                public int compare(SwipeListViewItem arg0, SwipeListViewItem arg1) {
+                    return Collator.getInstance(Locale.CHINESE).compare(arg0.getName(), arg1.getName());
+                }
+            });
             return data;
         }
 
@@ -317,4 +328,71 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             }
         }
     }
+
+    private class UploadBorrowerInfo extends AsyncTask<String, Integer, UploadResult> {
+        SwipeListViewItem item;
+
+        public UploadBorrowerInfo(SwipeListViewItem item) {
+            this.item = item;
+        }
+
+        @Override
+        protected UploadResult doInBackground(String... params) {
+            UploadResult result = new UploadResult();
+            Borrower borrower = new Borrower(this.item.getIdFileName());
+            this.item.setUploading(true);
+            Log.d(TAG, String.format("Uploading: %s -- %s", this.item.getName(), borrower.getId()));
+            publishProgress(this.item.getUploadedProgress());
+            for (int i = this.item.getUploadedProgress(); i <= 100; i++) {
+                try {
+                    //TODO: invoke remote server api
+                    Thread.sleep(100);
+                    publishProgress(i);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Upload borrower error", e);
+                }
+            }
+            this.item.setUploading(false);
+            this.item.setUploadedProgress(100);
+            this.item.setCurrentProgress(100);
+            result.isSucceed = true;
+
+            return result;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Log.d(TAG, String.format("onProgressUpdate: %d - %s -- %d", data.indexOf(item),
+                    this.item.getName(), values[0]));
+            // Update only when we're not scrolling, and only for visible views
+            if (mScrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                int start = swipeListView.getFirstVisiblePosition();
+                for (int i = start, j = swipeListView.getLastVisiblePosition(); i <= j; i++) {
+                    View view = swipeListView.getChildAt(i - start);
+                    if (((SwipeListViewItem) swipeListView.getItemAtPosition(i)).isUploading()) {
+                        Log.d(TAG, "onProgressUpdate: update status.");
+                        this.item.setCurrentProgress(values[0]);
+                        swipeListView.getAdapter().getView(i, view, swipeListView); // Tell the adapter to update this view
+                    }
+
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UploadResult uploadResult) {
+            super.onPostExecute(uploadResult);
+            if (uploadResult.isSucceed) {
+                showMessage(String.format(getString(R.string.upload_finished),
+                        this.item.getName()));
+            } else showMessage(String.format(getString(R.string.upload_fail),
+                    this.item.getName()));
+
+        }
+    }
+
+    private class UploadResult {
+        boolean isSucceed;
+    }
+
 }
