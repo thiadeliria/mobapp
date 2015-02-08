@@ -617,6 +617,11 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 moveTo = swapRight ? (int) (viewWidth - rightOffset) : (int) (-viewWidth + leftOffset);
             }
         }
+        final boolean aux = !opened.get(position);
+        if(swap) {
+            opened.set(position, aux);
+            openedRight.set(position, swapRight);
+        }
 
         animate(view)
                 .translationX(moveTo)
@@ -626,16 +631,16 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                     public void onAnimationEnd(Animator animation) {
                         swipeListView.resetScrolling();
                         if (swap) {
-                            boolean aux = !opened.get(position);
-                            opened.set(position, aux);
+//                            boolean aux = !opened.get(position);
+//                            opened.set(position, aux);
                             if (aux) {
                                 swipeListView.onOpened(position, swapRight);
-                                openedRight.set(position, swapRight);
+//                                openedRight.set(position, swapRight);
                             } else {
                                 swipeListView.onClosed(position, openedRight.get(position));
                             }
                         }
-                        resetCell();
+//                        resetCell();
                     }
                 });
     }
@@ -742,15 +747,29 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
 
     }
 
+    void closeOtherOpenedItems() {
+        if (opened != null && downPosition != SwipeListView.INVALID_POSITION) {
+            int start = swipeListView.getFirstVisiblePosition();
+            int end = swipeListView.getLastVisiblePosition();
+            for (int i = start; i <= end; i++) {
+                if (opened.get(i) && i != downPosition) {
+                    closeAnimate(swipeListView.getChildAt(i - start).findViewById(swipeFrontView), i);
+                }
+            }
+        }
+
+    }
+
     /**
      * @see View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
      */
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        Log.d("aaaaa", "onTouch: " + MotionEventCompat.getActionMasked(motionEvent));
         if (!isSwipeEnabled()) {
             return false;
         }
-
+        closeOtherOpenedItems();
         if (viewWidth < 2) {
             viewWidth = swipeListView.getWidth();
         }

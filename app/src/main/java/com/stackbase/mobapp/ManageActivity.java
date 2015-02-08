@@ -54,20 +54,20 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         adapter = new SwipeListViewAdapter(this, data);
         adapter.setUpdateCallback(this);
         swipeListView = (SwipeListView) findViewById(R.id.swipe_list_view);
-//        swipeListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         swipeListView.setSwipeCloseAllItemsWhenMoveList(true);
+//        swipeListView.setAnimationTime(200);
+        swipeListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         swipeListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 mScrollState = scrollState;
             }
+
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                swipeListView.closeOpenedItems();
             }
         });
-
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            swipeListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 //                @Override
@@ -103,10 +103,11 @@ public class ManageActivity extends Activity implements IUpdateCallback {
 //            });
 //        }
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
+
             @Override
             public void onOpened(int position, boolean toRight) {
                 Log.d(TAG, String.format("onOpened %d - toRight %b", position, toRight));
-                setListOffset(position, toRight);
+                Log.e(TAG, "test", new Exception("onOpened"));
             }
 
             @Override
@@ -124,9 +125,6 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             @Override
             public void onStartOpen(int position, int action, boolean right) {
                 Log.d(TAG, String.format("onStartOpen %d - action %d", position, action));
-                if (action == SwipeListView.SWIPE_ACTION_REVEAL) {
-                    setListOffset(position, right);
-                }
             }
 
             @Override
@@ -137,6 +135,9 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             @Override
             public void onClickFrontView(int position) {
                 Log.d(TAG, String.format("onClickFrontView %d", position));
+                View view = getItemViewByPosition(position, swipeListView);
+                view.requestFocusFromTouch();
+                swipeListView.setItemChecked(position, true);
                 if (!data.get(position).isUploading()) {
                     //Show the detail
                     Intent intent = new Intent();
@@ -170,22 +171,18 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         progressDialog.show();
     }
 
-    private void setListOffset(int position, boolean toRight) {
-        // Set the offset
-        View item = getItemViewByPosition(position, swipeListView);
-        SwipeListViewAdapter.ViewHolder holder = (SwipeListViewAdapter.ViewHolder) item.getTag();
-        float offset = convertDpToPixel(holder.getDelBtn().getMeasuredWidth()
-                + holder.getUploadBtn().getMeasuredWidth());
-        SwipeListViewItem swipeListViewItem = data.get(position);
-        if (swipeListViewItem.isUploading() || swipeListViewItem.getUploadedProgress() == 100) {
-            offset = 1;
-        }
-        if (toRight) {
-            swipeListView.setOffsetRight(offset);
-        } else {
-            swipeListView.setOffsetLeft(offset);
-        }
+    @Override
+    public void setSwipeOffset(float offset) {
+        swipeListView.setOffsetRight(convertDpToPixel(offset));
+        swipeListView.setOffsetLeft(convertDpToPixel(offset));
+    }
 
+    private void closeViewItem() {
+        final int firstListItemPosition = swipeListView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + swipeListView.getChildCount() - 1;
+        for (int i = firstListItemPosition; i < lastListItemPosition; i++) {
+            swipeListView.closeAnimate(i);
+        }
     }
 
     private View getItemViewByPosition(int pos, ListView listView) {

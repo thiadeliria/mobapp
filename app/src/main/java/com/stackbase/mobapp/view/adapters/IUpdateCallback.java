@@ -6,4 +6,5 @@ public interface IUpdateCallback {
 
     void dismiss(int position);
 
+    void setSwipeOffset(float offset);
 }
