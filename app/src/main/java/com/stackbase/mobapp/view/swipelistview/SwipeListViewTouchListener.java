@@ -765,7 +765,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        Log.d("aaaaa", "onTouch: " + MotionEventCompat.getActionMasked(motionEvent));
+        Log.d("aaaaa", "onTouch: " + MotionEventCompat.getActionMasked(motionEvent) + "---" + downPosition);
         if (!isSwipeEnabled()) {
             return false;
         }
@@ -877,6 +877,10 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             }
 
             case MotionEvent.ACTION_MOVE: {
+                if (!swipeListView.isMovable(downPosition)) {
+                    return false;
+                }
+
                 if (velocityTracker == null || paused || downPosition == ListView.INVALID_POSITION) {
                     break;
                 }

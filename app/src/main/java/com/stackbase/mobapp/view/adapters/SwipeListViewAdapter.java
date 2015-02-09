@@ -123,8 +123,8 @@ public class SwipeListViewAdapter extends BaseAdapter {
                 updateCallback.startProgress(item);
             }
         });
-        Log.d(TAG, String.format("test--%d--%s--%s--%s---", position, holder.title.getText(), holder.title,
-                holder.uploadPB));
+//        Log.d(TAG, String.format("test--%d--%s--%s--%s---", position, holder.title.getText(), holder.title,
+//                holder.uploadPB));
 
         return convertView;
     }
@@ -142,6 +142,7 @@ public class SwipeListViewAdapter extends BaseAdapter {
             Button delBtn = (Button) parentView.findViewById(R.id.delBorrowerBtn);
             Button uploadBtn = (Button) parentView.findViewById(R.id.uploadBorrowerBtn);
             float offset = delBtn.getMeasuredWidth() + uploadBtn.getMeasuredWidth();
+            Log.d(TAG, "onGlobalLayout: " + offset);
             if (offset > 0) {
                 updateCallback.setSwipeOffset(offset);
             }

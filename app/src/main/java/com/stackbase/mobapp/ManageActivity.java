@@ -130,6 +130,13 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             }
 
             @Override
+            public boolean isMovable(int position) {
+                if (data.get(position).isUploading() || data.get(position).getUploadedProgress() == 100) {
+                    return false;
+                } else return true;
+            }
+
+            @Override
             public void onStartOpen(int position, int action, boolean right) {
                 Log.d(TAG, String.format("onStartOpen %d - action %d", position, action));
             }
@@ -142,10 +149,8 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             @Override
             public void onClickFrontView(int position) {
                 Log.d(TAG, String.format("onClickFrontView %d", position));
-                View view = getItemViewByPosition(position, swipeListView);
-                view.requestFocusFromTouch();
                 swipeListView.setItemChecked(position, true);
-                if (!data.get(position).isUploading()) {
+                if (!data.get(position).isUploading() && data.get(position).getUploadedProgress() != 100) {
                     //Show the detail
                     Intent intent = new Intent();
                     intent.setClass(ManageActivity.this, CollectActivity.class);
@@ -182,14 +187,6 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     public void setSwipeOffset(float offset) {
         swipeListView.setOffsetRight(convertDpToPixel(offset));
         swipeListView.setOffsetLeft(convertDpToPixel(offset));
-    }
-
-    private void closeViewItem() {
-        final int firstListItemPosition = swipeListView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + swipeListView.getChildCount() - 1;
-        for (int i = firstListItemPosition; i < lastListItemPosition; i++) {
-            swipeListView.closeAnimate(i);
-        }
     }
 
     private View getItemViewByPosition(int pos, ListView listView) {
@@ -360,7 +357,7 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                 for (int i = start, j = swipeListView.getLastVisiblePosition(); i <= j; i++) {
                     View view = swipeListView.getChildAt(i - start);
                     if (((SwipeListViewItem) swipeListView.getItemAtPosition(i)).isUploading()) {
-                        Log.d(TAG, "onProgressUpdate: update status.");
+//                        Log.d(TAG, "onProgressUpdate: update status.");
                         swipeListView.getAdapter().getView(i, view, swipeListView); // Tell the adapter to update this view
                     }
 

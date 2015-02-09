@@ -378,6 +378,14 @@ public class SwipeListView extends ListView {
         }
     }
 
+    protected boolean isMovable(int position) {
+        boolean result = true;
+        if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
+            result = swipeListViewListener.isMovable(position);
+        }
+        return result;
+    }
+
     /**
      * Start open item
      *

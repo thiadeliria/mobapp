@@ -49,6 +49,8 @@ public interface SwipeListViewListener {
      */
     void onMove(int position, float x);
 
+    boolean isMovable(int position);
+
     /**
      * Start open item
      * @param position of the view in the list

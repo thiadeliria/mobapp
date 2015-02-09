@@ -61,4 +61,9 @@ public class BaseSwipeListViewListener implements SwipeListViewListener {
     @Override
     public void onLastListItem() {
     }
+
+    @Override
+    public boolean isMovable(int position) {
+        return true;
+    }
 }
