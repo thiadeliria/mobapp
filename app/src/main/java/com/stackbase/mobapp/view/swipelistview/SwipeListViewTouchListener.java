@@ -816,10 +816,15 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                     }
                 }
                 view.onTouchEvent(motionEvent);
+                if (swipeDrawableChecked > 0 && !opened.get(downPosition)) frontView.setBackgroundResource(swipeDrawableChecked);
+
                 return true;
             }
 
             case MotionEvent.ACTION_UP: {
+                if (swipeDrawableUnchecked > 0) frontView.setBackgroundResource(swipeDrawableUnchecked);
+                view.onTouchEvent(motionEvent);
+
                 if (velocityTracker == null || !swiping || downPosition == ListView.INVALID_POSITION) {
                     break;
                 }
@@ -873,6 +878,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
 //                    frontView.setLongClickable(opened.get(downPosition));
 //                }
                 swiping = false;
+
                 break;
             }
 

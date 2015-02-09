@@ -17,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
@@ -114,7 +115,6 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             @Override
             public void onOpened(int position, boolean toRight) {
                 Log.d(TAG, String.format("onOpened %d - toRight %b", position, toRight));
-                Log.e(TAG, "test", new Exception("onOpened"));
             }
 
             @Override
@@ -149,7 +149,6 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             @Override
             public void onClickFrontView(int position) {
                 Log.d(TAG, String.format("onClickFrontView %d", position));
-                swipeListView.setItemChecked(position, true);
                 if (!data.get(position).isUploading() && data.get(position).getUploadedProgress() != 100) {
                     //Show the detail
                     Intent intent = new Intent();
@@ -172,6 +171,13 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                     data.remove(position);
                 }
                 adapter.notifyDataSetChanged();
+            }
+        });
+
+        swipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, String.format("onItemClick %d -- %d", position, id));
             }
         });
         swipeListView.setAdapter(adapter);
