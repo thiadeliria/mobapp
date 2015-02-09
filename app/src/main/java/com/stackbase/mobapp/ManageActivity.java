@@ -10,6 +10,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -45,6 +47,11 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     private SwipeListView swipeListView;
     private ProgressDialog progressDialog;
     private int mScrollState;
+
+    private static final int MSG_WHAT_UPLOAD_BORROWER = 1;
+    private static final String MSG_KEY_BORROWER_NAME = "MSG_KEY_BORROWER_NAME";
+    private static final String MSG_KEY_PROGRESS = "MSG_KEY_PROGRESS";
+    private static final String MSG_KEY_UPLOAD_RESULT = "MSG_KEY_UPLOAD_RESULT";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -242,25 +249,25 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                 reload();
                 break;
             case REQUEST_ID_CHANGE:
-                Borrower borrower = (Borrower) intent.getSerializableExtra(Constant.INTENT_KEY_BORROWER_OBJ);
-                if (borrower != null) {
-                    // Do not allow to change the id and name
+//                Borrower borrower = (Borrower) intent.getSerializableExtra(Constant.INTENT_KEY_BORROWER_OBJ);
+//                if (borrower != null) {
+                // Do not allow to change the id and name
 //                    for (SwipeListViewItem item : data) {
 //                        if (item.getId().equals(borrower.getId())) {
 //                            item.setName(borrower.getName());
 //                            break;
 //                        }
 //                    }
-                    adapter.notifyDataSetChanged();
-                }
+//                    adapter.notifyDataSetChanged();
+//                }
         }
     }
 
     @Override
     public void startProgress(SwipeListViewItem item) {
         swipeListView.closeAnimate(data.indexOf(item));
-        UploadBorrowerInfo task = new UploadBorrowerInfo(item);
-        task.execute();
+        UploadBorrowerInfo task = new UploadBorrowerInfo(item, new MessageHandler());
+        new Thread(task).start();
     }
 
     @Override
@@ -326,41 +333,27 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         }
     }
 
-    private class UploadBorrowerInfo extends AsyncTask<String, Integer, UploadResult> {
-        SwipeListViewItem item;
-
-        public UploadBorrowerInfo(SwipeListViewItem item) {
-            this.item = item;
-        }
-
+    class MessageHandler extends Handler {
         @Override
-        protected UploadResult doInBackground(String... params) {
-            UploadResult result = new UploadResult();
-            Borrower borrower = new Borrower(this.item.getIdFileName());
-            this.item.setUploading(true);
-            Log.d(TAG, String.format("Uploading: %s -- %s", this.item.getName(), borrower.getId()));
-            publishProgress(this.item.getUploadedProgress());
-            for (int i = this.item.getUploadedProgress(); i <= 100; i++) {
-                try {
-                    //TODO: invoke remote server api
-                    Thread.sleep(100);
-                    publishProgress(i);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "Upload borrower error", e);
-                }
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_WHAT_UPLOAD_BORROWER:
+                    int current = msg.arg1;
+                    updateProgress(current);
+                    if (current == 100) {
+                        String name = msg.getData().getString(MSG_KEY_BORROWER_NAME);
+                        boolean result = msg.getData().getBoolean(MSG_KEY_UPLOAD_RESULT);
+                        if (result)
+                            showMessage(String.format(getString(R.string.upload_finished), name));
+                        else
+                            showMessage(String.format(getString(R.string.upload_fail), name));
+                    }
+                    break;
             }
-            this.item.setUploading(false);
-            this.item.setUploadedProgress(100);
-            this.item.setCurrentProgress(100);
-            result.isSucceed = true;
-
-            return result;
+            super.handleMessage(msg);
         }
 
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            Log.d(TAG, String.format("onProgressUpdate: %d - %s -- %d", data.indexOf(item),
-                    this.item.getName(), values[0]));
+        protected void updateProgress(int progress) {
             // Update only when we're not scrolling, and only for visible views
             if (mScrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                 int start = swipeListView.getFirstVisiblePosition();
@@ -368,7 +361,6 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                     View view = swipeListView.getChildAt(i - start);
                     if (((SwipeListViewItem) swipeListView.getItemAtPosition(i)).isUploading()) {
                         Log.d(TAG, "onProgressUpdate: update status.");
-                        this.item.setCurrentProgress(values[0]);
                         swipeListView.getAdapter().getView(i, view, swipeListView); // Tell the adapter to update this view
                     }
 
@@ -376,20 +368,46 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             }
         }
 
-        @Override
-        protected void onPostExecute(UploadResult uploadResult) {
-            super.onPostExecute(uploadResult);
-            if (uploadResult.isSucceed) {
-                showMessage(String.format(getString(R.string.upload_finished),
-                        this.item.getName()));
-            } else showMessage(String.format(getString(R.string.upload_fail),
-                    this.item.getName()));
+    }
 
+    private class UploadBorrowerInfo implements Runnable {
+        SwipeListViewItem item;
+        MessageHandler handler;
+
+        public UploadBorrowerInfo(SwipeListViewItem item, MessageHandler handler) {
+            this.item = item;
+            this.handler = handler;
         }
-    }
 
-    private class UploadResult {
-        boolean isSucceed;
-    }
+        @Override
+        public void run() {
+            Borrower borrower = new Borrower(this.item.getIdFileName());
+            this.item.setUploading(true);
+            Log.d(TAG, String.format("Uploading: %s -- %s", this.item.getName(), borrower.getId()));
+            publishProgress(this.item.getUploadedProgress(), true);
+            for (int i = this.item.getUploadedProgress(); i <= 100; i++) {
+                try {
+                    //TODO: invoke remote server api
+                    Thread.sleep(100);
+                    publishProgress(i, true);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Upload borrower error", e);
+                }
+            }
+            this.item.setUploading(false);
+            this.item.setUploadedProgress(100);
+            this.item.setCurrentProgress(100);
+        }
 
+        private void publishProgress(int progress, boolean result) {
+            Message msg = handler.obtainMessage();
+            msg.what = MSG_WHAT_UPLOAD_BORROWER;
+            msg.arg1 = progress;
+            msg.getData().putString(MSG_KEY_BORROWER_NAME, this.item.getName());
+            msg.getData().putBoolean(MSG_KEY_UPLOAD_RESULT, result);
+            this.item.setCurrentProgress(progress);
+            msg.sendToTarget();
+        }
+
+    }
 }
