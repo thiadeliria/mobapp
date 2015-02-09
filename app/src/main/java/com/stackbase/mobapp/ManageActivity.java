@@ -2,6 +2,9 @@ package com.stackbase.mobapp;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -283,9 +287,27 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         swipeListView.dismiss(position);
     }
 
-    public void showMessage(String msg) {
-        //TODO: need send this message to message center.
-        Helper.mMakeTextToast(this, msg, true);
+    public PendingIntent getDefalutIntent(int flags){
+        PendingIntent pendingIntent= PendingIntent.getActivity(this, 1, new Intent(), flags);
+        return pendingIntent;
+    }
+
+    public void showMessage(int notifyId, String msg) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setContentTitle(getString(R.string.upload_title))
+                .setContentText(msg)
+                .setContentIntent(getDefalutIntent(Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_AUTO_CANCEL))
+                .setTicker(getString(R.string.upload_notify))
+                .setWhen(System.currentTimeMillis())
+                .setPriority(Notification.PRIORITY_DEFAULT)
+                .setOngoing(false)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setVibrate(new long[] {0,300,500,700})
+                .setSmallIcon(R.drawable.ic_launcher);
+        notificationManager.notify(notifyId, mBuilder.build());
+
+//        Helper.mMakeTextToast(this, msg, true);
     }
 
 
@@ -342,14 +364,15 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             switch (msg.what) {
                 case MSG_WHAT_UPLOAD_BORROWER:
                     int current = msg.arg1;
+                    int id = msg.arg2;
                     updateProgress(current);
                     if (current == 100) {
                         String name = msg.getData().getString(MSG_KEY_BORROWER_NAME);
                         boolean result = msg.getData().getBoolean(MSG_KEY_UPLOAD_RESULT);
                         if (result)
-                            showMessage(String.format(getString(R.string.upload_finished), name));
+                            showMessage(id, String.format(getString(R.string.upload_finished), name));
                         else
-                            showMessage(String.format(getString(R.string.upload_fail), name));
+                            showMessage(id, String.format(getString(R.string.upload_fail), name));
                     }
                     break;
             }
@@ -406,6 +429,7 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             Message msg = handler.obtainMessage();
             msg.what = MSG_WHAT_UPLOAD_BORROWER;
             msg.arg1 = progress;
+            msg.arg2 = data.indexOf(this.item);
             msg.getData().putString(MSG_KEY_BORROWER_NAME, this.item.getName());
             msg.getData().putBoolean(MSG_KEY_UPLOAD_RESULT, result);
             this.item.setCurrentProgress(progress);
