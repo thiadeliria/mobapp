@@ -46,7 +46,19 @@ public class FragmentIDCard extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         content = inflater.inflate(R.layout.fragment_idcard, container, false);
+        idEdit = (EditText) content.findViewById(R.id.idEdit);
+        nameEdit = (EditText) content.findViewById(R.id.nameEdit);
+        maleButton = (RadioButton) content.findViewById(R.id.maleButton);
+        femaleButton = (RadioButton) content.findViewById(R.id.femaleButton);
+        minzuEdit = (EditText) content.findViewById(R.id.minzuEdit);
+        dobEdit = (EditText) content.findViewById(R.id.dobEdit);
+        addrEdit = (EditText) content.findViewById(R.id.addrEdit);
+        locationEdit = (EditText) content.findViewById(R.id.locationEdit);
+        expiryFromEdit = (EditText) content.findViewById(R.id.expiryFromEdit);
+        expiryToEdit = (EditText) content.findViewById(R.id.expiryToEdit);
+
         initView();
 
         return content;
@@ -55,6 +67,14 @@ public class FragmentIDCard extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+
     }
 
     @Override
@@ -72,6 +92,8 @@ public class FragmentIDCard extends Fragment {
     }
 
     private void initView() {
+        Log.d(TAG, "initView");
+
         active = this.getActivity();
         frantIDPic = (ImageView) content.findViewById(R.id.frontView);
 
@@ -86,17 +108,6 @@ public class FragmentIDCard extends Fragment {
         };
 
         frantIDPic.setOnClickListener(clickListener);
-
-        idEdit = (EditText) content.findViewById(R.id.idEdit);
-        nameEdit = (EditText) content.findViewById(R.id.nameEdit);
-        maleButton = (RadioButton) content.findViewById(R.id.maleButton);
-        femaleButton = (RadioButton) content.findViewById(R.id.femaleButton);
-        minzuEdit = (EditText) content.findViewById(R.id.minzuEdit);
-        dobEdit = (EditText) content.findViewById(R.id.dobEdit);
-        addrEdit = (EditText) content.findViewById(R.id.addrEdit);
-        locationEdit = (EditText) content.findViewById(R.id.locationEdit);
-        expiryFromEdit = (EditText) content.findViewById(R.id.expiryFromEdit);
-        expiryToEdit = (EditText) content.findViewById(R.id.expiryToEdit);
 
         idEdit.setEnabled(true);
         nameEdit.setEnabled(true);
@@ -141,6 +152,7 @@ public class FragmentIDCard extends Fragment {
         String location = "";
         Date expiryFrom = null;
         Date expiryTo = null;
+
         if (idEdit != null) {
             id = idEdit.getText().toString();
         }

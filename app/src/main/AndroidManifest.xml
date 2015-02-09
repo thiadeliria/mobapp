@@ -52,6 +52,7 @@
         </activity>
         <activity
             android:name=".CollectActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
         </activity>
         <activity
