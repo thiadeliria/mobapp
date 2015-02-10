@@ -17,7 +17,7 @@ import android.widget.RadioButton;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.objects.Borrower;
-import com.stackbase.mobapp.ocr.CaptureActivity;
+import com.stackbase.mobapp.ocr.OCRActivity;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 
@@ -101,7 +101,7 @@ public class FragmentIDCard extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(active, CaptureActivity.class);
+                intent.setClass(active, OCRActivity.class);
                 startActivity(intent);
             }
 

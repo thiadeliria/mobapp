@@ -58,10 +58,11 @@ import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.stackbase.mobapp.R;
-import com.stackbase.mobapp.activity.FinishListener;
 import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.activity.FinishListener;
 import com.stackbase.mobapp.camera.BeepManager;
 import com.stackbase.mobapp.ocr.camera.CameraManager;
+import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.LanguageCodeHelper;
 import com.stackbase.mobapp.view.ShutterButton;
 import com.stackbase.mobapp.view.ViewfinderView;
@@ -78,10 +79,10 @@ import java.io.IOException;
  * The code for this class was adapted from the ZXing project:
  * http://code.google.com/p/zxing/
  */
-public final class CaptureActivity extends Activity implements
+public final class OCRActivity extends Activity implements
 		SurfaceHolder.Callback, ShutterButton.OnShutterButtonListener {
 
-	private static final String TAG = CaptureActivity.class.getSimpleName();
+	private static final String TAG = OCRActivity.class.getSimpleName();
 
 	// Note: These constants will be overridden by any default values defined in
 	// preferences.xml.
@@ -90,14 +91,8 @@ public final class CaptureActivity extends Activity implements
 	// public static final String DEFAULT_SOURCE_LANGUAGE_CODE = "eng";
 	public static final String DEFAULT_SOURCE_LANGUAGE_CODE = "chi_sim";
 
-	/** The default OCR engine to use. */
-	public static final String DEFAULT_OCR_ENGINE_MODE = "Tesseract";
-
 	/** The default page segmentation mode to use. */
 	public static final String DEFAULT_PAGE_SEGMENTATION_MODE = "Auto";
-
-	/** Whether to use autofocus by default. */
-	public static final boolean DEFAULT_TOGGLE_AUTO_FOCUS = true;
 
 	/**
 	 * Whether to initially disable continuous-picture and continuous-video
@@ -106,20 +101,11 @@ public final class CaptureActivity extends Activity implements
 	// public static final boolean DEFAULT_DISABLE_CONTINUOUS_FOCUS = true;
 	public static final boolean DEFAULT_DISABLE_CONTINUOUS_FOCUS = true;
 
-	/** Whether to beep by default when the shutter button is pressed. */
-	public static final boolean DEFAULT_TOGGLE_BEEP = false;
-
 	/** Whether to initially show a looping, real-time OCR display. */
 	public static final boolean DEFAULT_TOGGLE_CONTINUOUS = false;
 
 	/** Whether to initially reverse the image returned by the camera. */
 	public static final boolean DEFAULT_TOGGLE_REVERSED_IMAGE = false;
-
-	/** Whether to enable the use of online translation services be default. */
-	public static final boolean DEFAULT_TOGGLE_TRANSLATION = true;
-
-	/** Whether the light should be initially activated by default. */
-	public static final boolean DEFAULT_TOGGLE_LIGHT = false;
 
 	/**
 	 * Flag to display the real-time recognition results at the top of the
@@ -174,7 +160,7 @@ public final class CaptureActivity extends Activity implements
 	private static final int OPTIONS_SHARE_TRANSLATED_TEXT_ID = Menu.FIRST + 3;
 
 	private CameraManager cameraManager;
-	private CaptureActivityHandler handler;
+	private OCRActivityHandler handler;
 	private ViewfinderView viewfinderView;
 	private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
@@ -545,7 +531,7 @@ public final class CaptureActivity extends Activity implements
 
 			// Creating the handler starts the preview, which can also throw a
 			// RuntimeException.
-			handler = new CaptureActivityHandler(this, cameraManager,
+			handler = new OCRActivityHandler(this, cameraManager,
 					isContinuousModeActive);
 
 		} catch (IOException ioe) {
@@ -636,28 +622,24 @@ public final class CaptureActivity extends Activity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// MenuInflater inflater = getMenuInflater();
-		// inflater.inflate(R.menu.options_menu, menu);
-		super.onCreateOptionsMenu(menu);
-		menu.add(0, SETTINGS_ID, 0, "Settings").setIcon(
-				android.R.drawable.ic_menu_preferences);
-		menu.add(0, ABOUT_ID, 0, "About").setIcon(
-				android.R.drawable.ic_menu_info_details);
-		return true;
-	}
+        getMenuInflater().inflate(R.menu.menu_capture, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent;
-		switch (item.getItemId()) {
-		case SETTINGS_ID: {
-			intent = new Intent().setClass(this, PreferencesActivity.class);
-			startActivity(intent);
-			break;
-		}
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.action_settings: {
+                intent = new Intent().setClass(this, PreferencesActivity.class);
+                intent.putExtra(Constant.INTENT_KEY_PREFERENCES_TYPE, this.getClass().getSimpleName());
+                startActivity(intent);
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		hasSurface = false;
@@ -779,7 +761,7 @@ public final class CaptureActivity extends Activity implements
 							.getDefaultSharedPreferences(this);
 					prefs.edit()
 							.putString(PreferencesActivity.KEY_OCR_ENGINE_MODE,
-									getOcrEngineModeName()).commit();
+									getOcrEngineModeName()).apply();
 				}
 			}
 		}
@@ -1232,10 +1214,10 @@ public final class CaptureActivity extends Activity implements
 
 		// Retrieve from preferences, and set in this Activity, the language
 		// preferences
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 		setSourceLanguage(prefs.getString(
 				PreferencesActivity.KEY_SOURCE_LANGUAGE_PREFERENCE,
-				CaptureActivity.DEFAULT_SOURCE_LANGUAGE_CODE));
+				OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE));
 		// setTargetLanguage(prefs.getString(
 		// PreferencesActivity.KEY_TARGET_LANGUAGE_PREFERENCE,
 		// CaptureActivity.DEFAULT_TARGET_LANGUAGE_CODE));
@@ -1246,7 +1228,7 @@ public final class CaptureActivity extends Activity implements
 		// Retrieve from preferences, and set in this Activity, the capture mode
 		// preference
 		if (prefs.getBoolean(PreferencesActivity.KEY_CONTINUOUS_PREVIEW,
-				CaptureActivity.DEFAULT_TOGGLE_CONTINUOUS)) {
+				OCRActivity.DEFAULT_TOGGLE_CONTINUOUS)) {
 			isContinuousModeActive = true;
 		} else {
 			isContinuousModeActive = false;
@@ -1315,40 +1297,19 @@ public final class CaptureActivity extends Activity implements
 		// Continuous preview
 		prefs.edit()
 				.putBoolean(PreferencesActivity.KEY_CONTINUOUS_PREVIEW,
-						CaptureActivity.DEFAULT_TOGGLE_CONTINUOUS).commit();
+						OCRActivity.DEFAULT_TOGGLE_CONTINUOUS).commit();
 
 		// Recognition language
 		prefs.edit()
 				.putString(PreferencesActivity.KEY_SOURCE_LANGUAGE_PREFERENCE,
-						CaptureActivity.DEFAULT_SOURCE_LANGUAGE_CODE).commit();
-
-		// OCR Engine
-		prefs.edit()
-				.putString(PreferencesActivity.KEY_OCR_ENGINE_MODE,
-						CaptureActivity.DEFAULT_OCR_ENGINE_MODE).commit();
-
-		// Autofocus
-		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_AUTO_FOCUS,
-						CaptureActivity.DEFAULT_TOGGLE_AUTO_FOCUS).commit();
-
-		// Disable problematic focus modes
-		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_DISABLE_CONTINUOUS_FOCUS,
-						CaptureActivity.DEFAULT_DISABLE_CONTINUOUS_FOCUS)
-				.commit();
-
-		// Beep
-		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_PLAY_BEEP,
-						CaptureActivity.DEFAULT_TOGGLE_BEEP).commit();
+                        OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE).commit();
 
 		// Character blacklist
 		prefs.edit()
 				.putString(
 						PreferencesActivity.KEY_CHARACTER_BLACKLIST,
 						OcrCharacterHelper
-								.getDefaultBlacklist(CaptureActivity.DEFAULT_SOURCE_LANGUAGE_CODE))
+								.getDefaultBlacklist(OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE))
 				.commit();
 
 		// Character whitelist
@@ -1356,24 +1317,20 @@ public final class CaptureActivity extends Activity implements
 				.putString(
 						PreferencesActivity.KEY_CHARACTER_WHITELIST,
 						OcrCharacterHelper
-								.getDefaultWhitelist(CaptureActivity.DEFAULT_SOURCE_LANGUAGE_CODE))
+								.getDefaultWhitelist(OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE))
 				.commit();
 
 		// Page segmentation mode
 		prefs.edit()
 				.putString(PreferencesActivity.KEY_PAGE_SEGMENTATION_MODE,
-						CaptureActivity.DEFAULT_PAGE_SEGMENTATION_MODE)
+						OCRActivity.DEFAULT_PAGE_SEGMENTATION_MODE)
 				.commit();
 
 		// Reversed camera image
 		prefs.edit()
 				.putBoolean(PreferencesActivity.KEY_REVERSE_IMAGE,
-						CaptureActivity.DEFAULT_TOGGLE_REVERSED_IMAGE).commit();
+						OCRActivity.DEFAULT_TOGGLE_REVERSED_IMAGE).commit();
 
-		// Light
-		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_TOGGLE_LIGHT,
-						CaptureActivity.DEFAULT_TOGGLE_LIGHT).commit();
 	}
 
 	void displayProgressDialog() {

@@ -53,7 +53,7 @@ public final class BeepManager {
             }
         });
 
-        AssetFileDescriptor file = activity.getResources().openRawResourceFd(R.raw.beep);
+        AssetFileDescriptor file = activity.getResources().openRawResourceFd(R.raw.camera_click);
         try {
             mediaPlayer.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
             file.close();

@@ -16,8 +16,6 @@
  */
 package com.stackbase.mobapp.ocr;
 
-import com.stackbase.mobapp.ocr.CaptureActivity;
-import com.stackbase.mobapp.ocr.OcrResult;
 import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.ocr.camera.CameraManager;
 
@@ -34,12 +32,12 @@ import android.widget.Toast;
  * The code for this class was adapted from the ZXing project:
  * http://code.google.com/p/zxing/
  */
-final class CaptureActivityHandler extends Handler {
+final class OCRActivityHandler extends Handler {
 
-	private static final String TAG = CaptureActivityHandler.class
+	private static final String TAG = OCRActivityHandler.class
 			.getSimpleName();
 
-	private final CaptureActivity activity;
+	private final OCRActivity activity;
 	private final DecodeThread decodeThread;
 	private static State state;
 	private final CameraManager cameraManager;
@@ -48,8 +46,8 @@ final class CaptureActivityHandler extends Handler {
 		PREVIEW, PREVIEW_PAUSED, CONTINUOUS, CONTINUOUS_PAUSED, SUCCESS, DONE
 	}
 
-	CaptureActivityHandler(CaptureActivity activity,
-			CameraManager cameraManager, boolean isContinuousModeActive) {
+	OCRActivityHandler(OCRActivity activity,
+                       CameraManager cameraManager, boolean isContinuousModeActive) {
 		this.activity = activity;
 		this.cameraManager = cameraManager;
 

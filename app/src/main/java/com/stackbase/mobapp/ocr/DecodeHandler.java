@@ -38,7 +38,7 @@ import com.stackbase.mobapp.view.ViewfinderView;
  */
 final class DecodeHandler extends Handler {
 
-	private final CaptureActivity activity;
+	private final OCRActivity activity;
 	private boolean running = true;
 	private final TessBaseAPI baseApi;
 	private BeepManager beepManager;
@@ -46,7 +46,7 @@ final class DecodeHandler extends Handler {
 	private static boolean isDecodePending;
 	private long timeRequired;
 
-	DecodeHandler(CaptureActivity activity) {
+	DecodeHandler(OCRActivity activity) {
 		this.activity = activity;
 		baseApi = activity.getBaseApi();
 		beepManager = new BeepManager(activity);

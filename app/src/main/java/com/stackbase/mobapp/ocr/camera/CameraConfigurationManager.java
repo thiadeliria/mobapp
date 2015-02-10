@@ -28,6 +28,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -126,38 +127,34 @@ final class CameraConfigurationManager {
     return screenResolution;
   }
 
-  void setTorch(Camera camera, boolean newSetting) {
-    Camera.Parameters parameters = camera.getParameters();
-    doSetTorch(parameters, newSetting);
-    camera.setParameters(parameters);
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    boolean currentSetting = prefs.getBoolean(PreferencesActivity.KEY_TOGGLE_LIGHT, false);
-    if (currentSetting != newSetting) {
-      SharedPreferences.Editor editor = prefs.edit();
-      editor.putBoolean(PreferencesActivity.KEY_TOGGLE_LIGHT, newSetting);
-      editor.commit();
+    void setTorch(Camera camera, String newSetting) {
+        Camera.Parameters parameters = camera.getParameters();
+        doSetTorch(parameters, newSetting);
+        camera.setParameters(parameters);
     }
-  }
 
-  private static void initializeTorch(Camera.Parameters parameters, SharedPreferences prefs) {
-    boolean currentSetting = prefs.getBoolean(PreferencesActivity.KEY_TOGGLE_LIGHT, false);
-    doSetTorch(parameters, currentSetting);
-  }
+    private static void initializeTorch(Camera.Parameters parameters, SharedPreferences prefs) {
+        String currentSetting = prefs.getString(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT);
+        doSetTorch(parameters, currentSetting);
+    }
 
-  private static void doSetTorch(Camera.Parameters parameters, boolean newSetting) {
-    String flashMode;
-    if (newSetting) {
-      flashMode = findSettableValue(parameters.getSupportedFlashModes(),
-                                    Camera.Parameters.FLASH_MODE_TORCH,
-                                    Camera.Parameters.FLASH_MODE_ON);
-    } else {
-      flashMode = findSettableValue(parameters.getSupportedFlashModes(),
-                                    Camera.Parameters.FLASH_MODE_OFF);
+    private static void doSetTorch(Camera.Parameters parameters, String newSetting) {
+        String flashMode;
+        if (newSetting.equals("auto")) {
+            flashMode = findSettableValue(parameters.getSupportedFlashModes(),
+                    Camera.Parameters.FLASH_MODE_AUTO);
+        } else if (newSetting.equals("open")) {
+            flashMode = findSettableValue(parameters.getSupportedFlashModes(),
+                    Camera.Parameters.FLASH_MODE_TORCH,
+                    Camera.Parameters.FLASH_MODE_ON);
+        } else {
+            flashMode = findSettableValue(parameters.getSupportedFlashModes(),
+                    Camera.Parameters.FLASH_MODE_OFF);
+        }
+        if (flashMode != null) {
+            parameters.setFlashMode(flashMode);
+        }
     }
-    if (flashMode != null) {
-      parameters.setFlashMode(flashMode);
-    }
-  }
 
   private Point findBestPreviewSizeValue(Camera.Parameters parameters, Point screenResolution) {
 

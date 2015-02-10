@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:key="preference_category_camera"
+        android:title="@string/camera_settings">
+
+	    <CheckBoxPreference
+	        android:key="preferences_auto_focus"
+	        android:title="@string/camera_focus"/>
+	    
+	    <CheckBoxPreference
+            android:key="preferences_play_beep"
+            android:title="@string/camera_beep"/>
+
+        <ListPreference android:key="preference_toggle_light"
+            android:title="@string/camera_flash"
+            android:entries="@array/flash_light_modes"
+            android:entryValues="@array/flash_light_mode_values"/>
+
+	</PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="preference_category_ocr"
+        android:title="@string/ocr_settings">
+        <ListPreference android:key="preference_ocr_engine_mode"
+            android:title="@string/ocr_engine"
+            android:entries="@array/ocrenginemodes"
+            android:entryValues="@array/ocrenginemodes"/>
+
+        <!--<EditTextPreference android:key="preference_character_blacklist"-->
+        <!--android:title="Character blacklist"/>-->
+
+        <!--<EditTextPreference android:key="preference_character_whitelist"-->
+        <!--android:title="Character whitelist"/>-->
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -39,16 +39,15 @@ import java.util.Date;
  * <p/>
  * The code for this class was adapted from the ZXing project: http://code.google.com/p/zxing/
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback,
+public final class CameraActivity extends Activity implements SurfaceHolder.Callback,
         ShutterButton.OnShutterButtonListener, Camera.PictureCallback {
 
-    private static final String TAG = CaptureActivity.class.getSimpleName();
+    private static final String TAG = CameraActivity.class.getSimpleName();
     // Context menu
     private static final int SETTINGS_ID = Menu.FIRST;
-    private static final int ABOUT_ID = Menu.FIRST + 1;
 
     private CameraManager cameraManager;
-    private CaptureActivityHandler handler;
+    private CameraActivityHandler handler;
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private View cameraButtonView;
@@ -90,7 +89,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         shutterButton = (ShutterButton) findViewById(R.id.shutter_button);
         shutterButton.setOnShutterButtonListener(this);
 
-        cameraManager = new CameraManager(getApplication());
+        cameraManager = new CameraManager(this);
 
         finishListener = new FinishListener(this);
 
@@ -117,6 +116,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
      */
     void onShutterButtonPress() {
         Log.d(TAG, "onShutterButtonPress");
+        String torch = prefs.getString(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT);
+        cameraManager.setTorch(torch);
+
 //        handler.stop();
         isPaused = true;
         cameraManager.takePicture(this);
@@ -157,7 +159,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             cameraManager.openDriver(surfaceHolder);
 
             // Creating the handler starts the preview, which can also throw a RuntimeException.
-            handler = new CaptureActivityHandler(this, cameraManager);
+            handler = new CameraActivityHandler(this, cameraManager);
 
         } catch (IOException ioe) {
             Log.e(TAG, "Fail to open camera driver", ioe);
@@ -236,11 +238,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //    MenuInflater inflater = getMenuInflater();
-        //    inflater.inflate(R.menu.options_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_capture, menu);
         super.onCreateOptionsMenu(menu);
-        menu.add(0, SETTINGS_ID, 0, "Settings").setIcon(android.R.drawable.ic_menu_preferences);
-//        menu.add(0, ABOUT_ID, 0, "About").setIcon(android.R.drawable.ic_menu_info_details);
         return true;
     }
 
@@ -248,17 +247,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case SETTINGS_ID: {
+            case R.id.action_settings: {
                 intent = new Intent().setClass(this, PreferencesActivity.class);
+                intent.putExtra(Constant.INTENT_KEY_PREFERENCES_TYPE, this.getClass().getSimpleName());
                 startActivity(intent);
                 break;
             }
-//            case ABOUT_ID: {
-//                intent = new Intent(this, HelpActivity.class);
-//                intent.putExtra(HelpActivity.REQUESTED_PAGE_KEY, HelpActivity.ABOUT_PAGE);
-//                startActivity(intent);
-//                break;
-//            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -331,11 +325,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
      */
     private void retrievePreferences() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Retrieve from preferences, and set in this Activity, the language preferences
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
-        prefs.registerOnSharedPreferenceChangeListener(listener);
+        PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 
         beepManager.updatePrefs();
     }
@@ -354,7 +344,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         Log.d(TAG, "In onPictureTaken");
         if (data != null) {
             Intent intent = new Intent();
-            intent.setClass(CaptureActivity.this, PictureConfirmActivity.class);
+            intent.setClass(CameraActivity.this, PictureConfirmActivity.class);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, saveTempImage(data));
             intent.putExtra(Constant.INTENT_KEY_PIC_FOLDER,
                     getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER));

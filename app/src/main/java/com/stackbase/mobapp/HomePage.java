@@ -15,8 +15,8 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.stackbase.mobapp.activity.FinishListener;
 import com.stackbase.mobapp.activity.PreferencesActivity;
+import com.stackbase.mobapp.activity.FinishListener;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
 
@@ -178,16 +178,15 @@ public class HomePage extends Activity implements Helper.ErrorCallback {
             file.mkdirs();
         }
         // Set storage dir
-        prefs.edit().putString(PreferencesActivity.KEY_STORAGE_DIR, default_storage).commit();
-
+        prefs.edit().putString(PreferencesActivity.KEY_STORAGE_DIR, default_storage).apply();
         // Autofocus
-        prefs.edit().putBoolean(PreferencesActivity.KEY_AUTO_FOCUS, Constant.DEFAULT_TOGGLE_AUTO_FOCUS).commit();
-
+        prefs.edit().putBoolean(PreferencesActivity.KEY_AUTO_FOCUS, Constant.DEFAULT_TOGGLE_AUTO_FOCUS).apply();
         // Beep
-        prefs.edit().putBoolean(PreferencesActivity.KEY_PLAY_BEEP, Constant.DEFAULT_TOGGLE_BEEP).commit();
-
+        prefs.edit().putBoolean(PreferencesActivity.KEY_PLAY_BEEP, Constant.DEFAULT_TOGGLE_BEEP).apply();
         // Light
-        prefs.edit().putBoolean(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT).commit();
+        prefs.edit().putString(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT).apply();
+        // OCR engine
+        prefs.edit().putString(PreferencesActivity.KEY_OCR_ENGINE_MODE, Constant.DEFAULT_OCR_ENGINE_MODE).apply();
     }
 
     @Override

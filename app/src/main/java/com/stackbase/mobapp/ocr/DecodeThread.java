@@ -22,8 +22,6 @@ import android.os.Looper;
 
 import java.util.concurrent.CountDownLatch;
 
-import com.stackbase.mobapp.ocr.CaptureActivity;
-
 /**
  * This thread does all the heavy lifting of decoding the images.
  *
@@ -31,11 +29,11 @@ import com.stackbase.mobapp.ocr.CaptureActivity;
  */
 final class DecodeThread extends Thread {
 
-  private final CaptureActivity activity;
+  private final OCRActivity activity;
   private Handler handler;
   private final CountDownLatch handlerInitLatch;
 
-  DecodeThread(CaptureActivity activity) {
+  DecodeThread(OCRActivity activity) {
     this.activity = activity;
     handlerInitLatch = new CountDownLatch(1);
   }

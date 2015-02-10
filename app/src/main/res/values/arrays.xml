@@ -15,6 +15,16 @@
  limitations under the License.
  -->
 <resources>
+    <string-array name="flash_light_modes">
+        <item>@string/camera_flash_auto</item>
+        <item>@string/camera_flash_close</item>
+        <item>@string/camera_flash_open</item>
+    </string-array>
+    <string-array name="flash_light_mode_values">
+        <item>auto</item>
+        <item>close</item>
+        <item>open</item>
+    </string-array>
 	<string-array name="capturemodes">
 		<item>Continuous</item>
 		<item>Single shot</item>

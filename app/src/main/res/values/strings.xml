@@ -9,11 +9,21 @@
     <string name="settings">设置</string>
     <string name="id_card">身份证</string>
     <string name="other_info">其他信息</string>
-    <!-- ocr_capture -->
+    <!-- capture -->
     <string name="use_picture">使用照片</string>
     <string name="retake">重拍</string>
     <string name="title_activity_select_picture_type">SelectPictureTypeActivity</string>
     <string name="action_settings">设置</string>
+    <string name="camera_settings">相机设置</string>
+    <string name="ocr_settings">图像识别设置</string>
+    <string name="ocr_engine">图像识别引擎</string>
+    <string name="camera_focus">自动对焦</string>
+    <string name="camera_beep">快门声</string>
+    <string name="camera_flash">闪光灯</string>
+    <string name="camera_flash_auto">自动</string>
+    <string name="camera_flash_open">开</string>
+    <string name="camera_flash_close">关</string>
+
     <string name="album_folder_tag">album_folder_name</string>
     <string name="title_activity_capture">CaptureActivity</string>
     <string name="storage_dir">存储路径</string>

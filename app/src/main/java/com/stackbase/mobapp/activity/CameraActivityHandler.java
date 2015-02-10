@@ -13,15 +13,15 @@ import com.stackbase.mobapp.utils.Helper;
  * <p/>
  * The code for this class was adapted from the ZXing project: http://code.google.com/p/zxing/
  */
-final class CaptureActivityHandler extends Handler implements Helper.ErrorCallback {
+final class CameraActivityHandler extends Handler implements Helper.ErrorCallback {
 
-    private static final String TAG = CaptureActivityHandler.class.getSimpleName();
+    private static final String TAG = CameraActivityHandler.class.getSimpleName();
     //  private final DecodeThread decodeThread;
     private static State state;
-    private final CaptureActivity activity;
+    private final CameraActivity activity;
     private final CameraManager cameraManager;
 
-    CaptureActivityHandler(CaptureActivity activity, CameraManager cameraManager) {
+    CameraActivityHandler(CameraActivity activity, CameraManager cameraManager) {
         this.activity = activity;
         this.cameraManager = cameraManager;
 

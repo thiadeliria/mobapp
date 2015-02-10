@@ -272,4 +272,9 @@ public final class CameraManager {
         camera.setDisplayOrientation(result);
     }
 
+    public void setTorch(String setting) {
+        if (camera != null) {
+            configManager.setTorch(camera, setting);
+        }
+    }
 }

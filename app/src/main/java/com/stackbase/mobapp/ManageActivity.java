@@ -303,7 +303,7 @@ public class ManageActivity extends Activity implements IUpdateCallback {
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setOngoing(false)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setVibrate(new long[] {0,300,500,700})
+                .setVibrate(new long[]{0, 300, 500, 700})
                 .setSmallIcon(R.drawable.ic_launcher);
         notificationManager.notify(notifyId, mBuilder.build());
 
