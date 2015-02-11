@@ -6,7 +6,6 @@ import android.hardware.Camera;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.utils.Constant;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public final class AutoFocusManager implements Camera.AutoFocusCallback {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         String currentFocusMode = camera.getParameters().getFocusMode();
         useAutoFocus =
-                sharedPrefs.getBoolean(PreferencesActivity.KEY_AUTO_FOCUS, Constant.DEFAULT_TOGGLE_AUTO_FOCUS) &&
+                sharedPrefs.getBoolean(Constant.KEY_AUTO_FOCUS, Constant.DEFAULT_TOGGLE_AUTO_FOCUS) &&
                         FOCUS_MODES_CALLING_AF.contains(currentFocusMode);
         Log.i(TAG, "Current focus mode '" + currentFocusMode + "'; use auto focus? " + useAutoFocus);
         manual = false;

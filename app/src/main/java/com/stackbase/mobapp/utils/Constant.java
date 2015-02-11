@@ -41,6 +41,40 @@ abstract public class Constant {
      */
     public static final String DEFAULT_STORAGE_DIR = "stackbase/mobapp/";
 
+    /**
+     * Whether to send notification after upload finish
+     */
+    public static final boolean DEFAULT_MESSAGE_NOTIFY = true;
+
+    /**
+     * Whether vibrate when send notification.
+     */
+    public static final boolean DEFAULT_MESSAGE_VIBRATE = true;
+
+    public static final String KEY_PREFERENCE_CATEGORY_OCR = "preference_category_ocr";
+    public static final String KEY_SOURCE_LANGUAGE_PREFERENCE = "sourceLanguageCodeOcrPref";
+    // Preference keys not carried over from ZXing project
+    public static final String KEY_PAGE_SEGMENTATION_MODE = "preference_page_segmentation_mode";
+    public static final String KEY_OCR_ENGINE_MODE = "preference_ocr_engine_mode";
+    public static final String KEY_CHARACTER_BLACKLIST = "preference_character_blacklist";
+    public static final String KEY_CHARACTER_WHITELIST = "preference_character_whitelist";
+    public static final String KEY_TOGGLE_LIGHT = "preference_toggle_light";
+    public static final String KEY_TRANSLATOR = "preference_translator";
+    public static final String KEY_CONTINUOUS_PREVIEW = "preference_capture_continuous";
+
+    public static final String KEY_AUTO_FOCUS = "preferences_auto_focus";
+    public static final String KEY_DISABLE_CONTINUOUS_FOCUS = "preferences_disable_continuous_focus";
+    public static final String KEY_HELP_VERSION_SHOWN = "preferences_help_version_shown";
+    public static final String KEY_NOT_OUR_RESULTS_SHOWN = "preferences_not_our_results_shown";
+    public static final String KEY_REVERSE_IMAGE = "preferences_reverse_image";
+    public static final String KEY_PLAY_BEEP = "preferences_play_beep";
+    public static final String KEY_VIBRATE = "preferences_vibrate";
+
+    public static final String KEY_STORAGE_DIR = "preference_storage_dir";
+
+    public static final String KEY_MESSAGE_NOTIFY = "preference_message_notify";
+    public static final String KEY_MESSAGE_VIBRATE = "preference_message_vibrate";
+
     public static final String INTENT_PACKAGE = "com.stackbase.mobapp";
 
     public static final String INTENT_KEY_ID = "INTENT_NAME_ID";

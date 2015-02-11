@@ -75,7 +75,7 @@ import java.io.IOException;
  * thread. It draws a viewfinder to help the user place the text correctly,
  * shows feedback as the image processing is happening, and then overlays the
  * results when a scan is successful.
- * 
+ *
  * The code for this class was adapted from the ZXing project:
  * http://code.google.com/p/zxing/
  */
@@ -732,7 +732,7 @@ public final class OCRActivity extends Activity implements
 
 	/**
 	 * Requests initialization of the OCR engine with the given parameters.
-	 * 
+	 *
 	 * @param storageRoot
 	 *            Path to location of the tessdata directory to use
 	 * @param languageCode
@@ -760,7 +760,7 @@ public final class OCRActivity extends Activity implements
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(this);
 					prefs.edit()
-							.putString(PreferencesActivity.KEY_OCR_ENGINE_MODE,
+							.putString(Constant.KEY_OCR_ENGINE_MODE,
 									getOcrEngineModeName()).apply();
 				}
 			}
@@ -780,7 +780,7 @@ public final class OCRActivity extends Activity implements
 				SharedPreferences prefs = PreferenceManager
 						.getDefaultSharedPreferences(this);
 				prefs.edit()
-						.putString(PreferencesActivity.KEY_OCR_ENGINE_MODE,
+						.putString(Constant.KEY_OCR_ENGINE_MODE,
 								getOcrEngineModeName()).commit();
 			}
 		}
@@ -820,7 +820,7 @@ public final class OCRActivity extends Activity implements
 			isContinuousModeActive = false;
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(this);
-			prefs.edit().putBoolean(PreferencesActivity.KEY_CONTINUOUS_PREVIEW,
+			prefs.edit().putBoolean(Constant.KEY_CONTINUOUS_PREVIEW,
 					false);
 		}
 
@@ -834,7 +834,7 @@ public final class OCRActivity extends Activity implements
 	/**
 	 * Displays information relating to the result of OCR, and requests a
 	 * translation if necessary.
-	 * 
+	 *
 	 * @param ocrResult
 	 *            Object representing successful OCR results
 	 * @return True if a non-null result was received for OCR
@@ -886,7 +886,7 @@ public final class OCRActivity extends Activity implements
 	/**
 	 * Displays information relating to the results of a successful real-time
 	 * OCR request.
-	 * 
+	 *
 	 * @param ocrResult
 	 *            Object representing successful OCR results
 	 */
@@ -934,7 +934,7 @@ public final class OCRActivity extends Activity implements
 	/**
 	 * Version of handleOcrContinuousDecode for failed OCR requests. Displays a
 	 * failure message.
-	 * 
+	 *
 	 * @param obj
 	 *            Metadata for the failed OCR request.
 	 */
@@ -959,16 +959,16 @@ public final class OCRActivity extends Activity implements
 	/**
 	 * Given either a Spannable String or a regular String and a token, apply
 	 * the given CharacterStyle to the span between the tokens.
-	 * 
+	 *
 	 * NOTE: This method was adapted from:
 	 * http://www.androidengineer.com/2010/08
 	 * /easy-method-for-formatting-android.html
-	 * 
+	 *
 	 * <p>
 	 * For example, {@code setSpanBetweenTokens("Hello ##world##!", "##", new
 	 * ForegroundColorSpan(0xFFFF0000));} will return a CharSequence
 	 * {@code "Hello world!"} with {@code world} in red.
-	 * 
+	 *
 	 */
 	private CharSequence setSpanBetweenTokens(CharSequence text, String token,
 			CharacterStyle... cs) {
@@ -1112,7 +1112,7 @@ public final class OCRActivity extends Activity implements
 	/**
 	 * Enables/disables the shutter button to prevent double-clicks on the
 	 * button.
-	 * 
+	 *
 	 * @param clickable
 	 *            True if the button should accept a click
 	 */
@@ -1172,7 +1172,7 @@ public final class OCRActivity extends Activity implements
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			int lastVersion = prefs.getInt(
-					PreferencesActivity.KEY_HELP_VERSION_SHOWN, 0);
+                    Constant.KEY_HELP_VERSION_SHOWN, 0);
 			if (lastVersion == 0) {
 				isFirstLaunch = true;
 			} else {
@@ -1188,7 +1188,7 @@ public final class OCRActivity extends Activity implements
 	/**
 	 * Returns a string that represents which OCR engine(s) are currently set to
 	 * be run.
-	 * 
+	 *
 	 * @return OCR engine mode
 	 */
 	String getOcrEngineModeName() {
@@ -1216,7 +1216,7 @@ public final class OCRActivity extends Activity implements
 		// preferences
 		PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 		setSourceLanguage(prefs.getString(
-				PreferencesActivity.KEY_SOURCE_LANGUAGE_PREFERENCE,
+                        Constant.KEY_SOURCE_LANGUAGE_PREFERENCE,
 				OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE));
 		// setTargetLanguage(prefs.getString(
 		// PreferencesActivity.KEY_TARGET_LANGUAGE_PREFERENCE,
@@ -1227,7 +1227,7 @@ public final class OCRActivity extends Activity implements
 
 		// Retrieve from preferences, and set in this Activity, the capture mode
 		// preference
-		if (prefs.getBoolean(PreferencesActivity.KEY_CONTINUOUS_PREVIEW,
+		if (prefs.getBoolean(Constant.KEY_CONTINUOUS_PREVIEW,
 				OCRActivity.DEFAULT_TOGGLE_CONTINUOUS)) {
 			isContinuousModeActive = true;
 		} else {
@@ -1239,7 +1239,7 @@ public final class OCRActivity extends Activity implements
 		String[] pageSegmentationModes = getResources().getStringArray(
 				R.array.pagesegmentationmodes);
 		String pageSegmentationModeName = prefs.getString(
-				PreferencesActivity.KEY_PAGE_SEGMENTATION_MODE,
+                Constant.KEY_PAGE_SEGMENTATION_MODE,
 				pageSegmentationModes[0]);
 		if (pageSegmentationModeName.equals(pageSegmentationModes[0])) {
 			pageSegmentationMode = TessBaseAPI.PageSegMode.PSM_AUTO_OSD;
@@ -1266,7 +1266,7 @@ public final class OCRActivity extends Activity implements
 		String[] ocrEngineModes = getResources().getStringArray(
 				R.array.ocrenginemodes);
 		String ocrEngineModeName = prefs.getString(
-				PreferencesActivity.KEY_OCR_ENGINE_MODE, ocrEngineModes[0]);
+            Constant.KEY_OCR_ENGINE_MODE, ocrEngineModes[0]);
 		if (ocrEngineModeName.equals(ocrEngineModes[0])) {
 			ocrEngineMode = TessBaseAPI.OEM_TESSERACT_ONLY;
 		} else if (ocrEngineModeName.equals(ocrEngineModes[1])) {
@@ -1296,18 +1296,18 @@ public final class OCRActivity extends Activity implements
 
 		// Continuous preview
 		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_CONTINUOUS_PREVIEW,
+				.putBoolean(Constant.KEY_CONTINUOUS_PREVIEW,
 						OCRActivity.DEFAULT_TOGGLE_CONTINUOUS).commit();
 
 		// Recognition language
 		prefs.edit()
-				.putString(PreferencesActivity.KEY_SOURCE_LANGUAGE_PREFERENCE,
+				.putString(Constant.KEY_SOURCE_LANGUAGE_PREFERENCE,
                         OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE).commit();
 
 		// Character blacklist
 		prefs.edit()
 				.putString(
-						PreferencesActivity.KEY_CHARACTER_BLACKLIST,
+                        Constant.KEY_CHARACTER_BLACKLIST,
 						OcrCharacterHelper
 								.getDefaultBlacklist(OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE))
 				.commit();
@@ -1315,20 +1315,20 @@ public final class OCRActivity extends Activity implements
 		// Character whitelist
 		prefs.edit()
 				.putString(
-						PreferencesActivity.KEY_CHARACTER_WHITELIST,
+                        Constant.KEY_CHARACTER_WHITELIST,
 						OcrCharacterHelper
 								.getDefaultWhitelist(OCRActivity.DEFAULT_SOURCE_LANGUAGE_CODE))
 				.commit();
 
 		// Page segmentation mode
 		prefs.edit()
-				.putString(PreferencesActivity.KEY_PAGE_SEGMENTATION_MODE,
+				.putString(Constant.KEY_PAGE_SEGMENTATION_MODE,
 						OCRActivity.DEFAULT_PAGE_SEGMENTATION_MODE)
 				.commit();
 
 		// Reversed camera image
 		prefs.edit()
-				.putBoolean(PreferencesActivity.KEY_REVERSE_IMAGE,
+				.putBoolean(Constant.KEY_REVERSE_IMAGE,
 						OCRActivity.DEFAULT_TOGGLE_REVERSED_IMAGE).commit();
 
 	}
@@ -1360,7 +1360,7 @@ public final class OCRActivity extends Activity implements
 
 	/**
 	 * Displays an error message dialog box to the user on the UI thread.
-	 * 
+	 *
 	 * @param title
 	 *            The title for the dialog box
 	 * @param message

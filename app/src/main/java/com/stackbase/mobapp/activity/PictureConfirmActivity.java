@@ -139,7 +139,7 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
         //get the mobile Pictures directory
         String storage_dir = getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER);
         if (storage_dir == null || storage_dir.equals("")) {
-            storage_dir = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.KEY_STORAGE_DIR, "");
+            storage_dir = PreferenceManager.getDefaultSharedPreferences(this).getString(Constant.KEY_STORAGE_DIR, "");
         }
 
         File picDir = new File(storage_dir);

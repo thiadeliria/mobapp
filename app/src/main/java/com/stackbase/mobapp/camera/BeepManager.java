@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.stackbase.mobapp.R;
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.utils.Constant;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public final class BeepManager {
     }
 
     private static boolean shouldBeep(SharedPreferences prefs, Context activity) {
-        boolean shouldPlayBeep = prefs.getBoolean(PreferencesActivity.KEY_PLAY_BEEP, Constant.DEFAULT_TOGGLE_BEEP);
+        boolean shouldPlayBeep = prefs.getBoolean(Constant.KEY_PLAY_BEEP, Constant.DEFAULT_TOGGLE_BEEP);
         if (shouldPlayBeep) {
             // See if sound settings overrides this
             AudioManager audioService = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);

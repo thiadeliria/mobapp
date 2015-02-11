@@ -24,7 +24,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.utils.BitmapUtilities;
 import com.stackbase.mobapp.utils.Constant;
@@ -57,11 +56,13 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     private static final String MSG_KEY_BORROWER_NAME = "MSG_KEY_BORROWER_NAME";
     private static final String MSG_KEY_PROGRESS = "MSG_KEY_PROGRESS";
     private static final String MSG_KEY_UPLOAD_RESULT = "MSG_KEY_UPLOAD_RESULT";
+    private SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.borrower_list);
+        prefs = PreferenceManager.getDefaultSharedPreferences(ManageActivity.this);
         data = new ArrayList<>();
         adapter = new SwipeListViewAdapter(this, data);
         adapter.setUpdateCallback(this);
@@ -186,7 +187,7 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         });
         swipeListView.setAdapter(adapter);
         reload();
-        new ListAppTask().execute();
+        new ListBorrowerInfoTask().execute();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.setCancelable(false);
@@ -295,27 +296,32 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     public void showMessage(int notifyId, String msg) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentTitle(getString(R.string.upload_title))
-                .setContentText(msg)
-                .setContentIntent(getDefalutIntent(Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_AUTO_CANCEL))
-                .setTicker(getString(R.string.upload_notify))
-                .setWhen(System.currentTimeMillis())
-                .setPriority(Notification.PRIORITY_DEFAULT)
-                .setOngoing(false)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setVibrate(new long[]{0, 300, 500, 700})
-                .setSmallIcon(R.drawable.ic_launcher);
-        notificationManager.notify(notifyId, mBuilder.build());
-
-//        Helper.mMakeTextToast(this, msg, true);
+        boolean msgNotify = prefs.getBoolean(Constant.KEY_MESSAGE_NOTIFY, Constant.DEFAULT_MESSAGE_NOTIFY);
+        boolean msgVibrate = prefs.getBoolean(Constant.KEY_MESSAGE_VIBRATE, Constant.DEFAULT_MESSAGE_VIBRATE);
+        if (msgNotify) {
+            mBuilder.setContentTitle(getString(R.string.upload_title))
+                    .setContentText(msg)
+                    .setContentIntent(getDefalutIntent(Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_AUTO_CANCEL))
+                    .setTicker(getString(R.string.upload_notify))
+                    .setWhen(System.currentTimeMillis())
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setOngoing(false)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setSmallIcon(R.drawable.logo_launcher);
+            if (msgVibrate) {
+                mBuilder.setVibrate(new long[]{0, 300, 500, 700});
+            }
+            notificationManager.notify(notifyId, mBuilder.build());
+        } else {
+            Helper.mMakeTextToast(this, msg, true);
+        }
     }
 
 
-    public class ListAppTask extends AsyncTask<Void, Void, List<SwipeListViewItem>> {
+    public class ListBorrowerInfoTask extends AsyncTask<Void, Void, List<SwipeListViewItem>> {
         protected List<SwipeListViewItem> doInBackground(Void... args) {
             List<SwipeListViewItem> data = new ArrayList();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ManageActivity.this);
-            String rootDir = prefs.getString(PreferencesActivity.KEY_STORAGE_DIR,
+            String rootDir = prefs.getString(Constant.KEY_STORAGE_DIR,
                     Constant.DEFAULT_STORAGE_DIR);
             for (Borrower borrower : Helper.loadBorrowersInfo(rootDir)) {
                 SwipeListViewItem item = new SwipeListViewItem();

@@ -16,27 +16,6 @@ import com.stackbase.mobapp.utils.Constant;
 public class PreferencesActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
 
-    public static final String KEY_PREFERENCE_CATEGORY_OCR = "preference_category_ocr";
-    public static final String KEY_SOURCE_LANGUAGE_PREFERENCE = "sourceLanguageCodeOcrPref";
-    // Preference keys not carried over from ZXing project
-    public static final String KEY_PAGE_SEGMENTATION_MODE = "preference_page_segmentation_mode";
-    public static final String KEY_OCR_ENGINE_MODE = "preference_ocr_engine_mode";
-    public static final String KEY_CHARACTER_BLACKLIST = "preference_character_blacklist";
-    public static final String KEY_CHARACTER_WHITELIST = "preference_character_whitelist";
-    public static final String KEY_TOGGLE_LIGHT = "preference_toggle_light";
-    public static final String KEY_TRANSLATOR = "preference_translator";
-    public static final String KEY_CONTINUOUS_PREVIEW = "preference_capture_continuous";
-
-    public static final String KEY_AUTO_FOCUS = "preferences_auto_focus";
-    public static final String KEY_DISABLE_CONTINUOUS_FOCUS = "preferences_disable_continuous_focus";
-    public static final String KEY_HELP_VERSION_SHOWN = "preferences_help_version_shown";
-    public static final String KEY_NOT_OUR_RESULTS_SHOWN = "preferences_not_our_results_shown";
-    public static final String KEY_REVERSE_IMAGE = "preferences_reverse_image";
-    public static final String KEY_PLAY_BEEP = "preferences_play_beep";
-    public static final String KEY_VIBRATE = "preferences_vibrate";
-
-    public static final String KEY_STORAGE_DIR = "preference_storage_dir";
-
     private ListPreference listPreferenceOcrEngineMode;
     private ListPreference listPreferencePageSegmentationMode;
 
@@ -58,20 +37,20 @@ public class PreferencesActivity extends PreferenceActivity implements
     private void initPreferences() {
         String preferType = getIntent().getStringExtra(Constant.INTENT_KEY_PREFERENCES_TYPE);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        autoFocus = (CheckBoxPreference) getPreferenceScreen().findPreference(KEY_AUTO_FOCUS);
-        beep = (CheckBoxPreference) getPreferenceScreen().findPreference(KEY_PLAY_BEEP);
-        flashLight = (ListPreference) getPreferenceScreen().findPreference(KEY_TOGGLE_LIGHT);
+        autoFocus = (CheckBoxPreference) getPreferenceScreen().findPreference(Constant.KEY_AUTO_FOCUS);
+        beep = (CheckBoxPreference) getPreferenceScreen().findPreference(Constant.KEY_PLAY_BEEP);
+        flashLight = (ListPreference) getPreferenceScreen().findPreference(Constant.KEY_TOGGLE_LIGHT);
 
-        onSharedPreferenceChanged(sharedPreferences, KEY_AUTO_FOCUS);
-        onSharedPreferenceChanged(sharedPreferences, KEY_PLAY_BEEP);
-        onSharedPreferenceChanged(sharedPreferences, KEY_TOGGLE_LIGHT);
+        onSharedPreferenceChanged(sharedPreferences, Constant.KEY_AUTO_FOCUS);
+        onSharedPreferenceChanged(sharedPreferences, Constant.KEY_PLAY_BEEP);
+        onSharedPreferenceChanged(sharedPreferences, Constant.KEY_TOGGLE_LIGHT);
 
         if (OCRActivity.class.getSimpleName().equals(preferType)) {
-            listPreferenceOcrEngineMode = (ListPreference) getPreferenceScreen().findPreference(KEY_OCR_ENGINE_MODE);
-            onSharedPreferenceChanged(sharedPreferences, KEY_OCR_ENGINE_MODE);
+            listPreferenceOcrEngineMode = (ListPreference) getPreferenceScreen().findPreference(Constant.KEY_OCR_ENGINE_MODE);
+            onSharedPreferenceChanged(sharedPreferences, Constant.KEY_OCR_ENGINE_MODE);
         } else {
             // hidden the OCR settings
-            PreferenceGroup ocrGroup = (PreferenceGroup) getPreferenceScreen().findPreference(KEY_PREFERENCE_CATEGORY_OCR);
+            PreferenceGroup ocrGroup = (PreferenceGroup) getPreferenceScreen().findPreference(Constant.KEY_PREFERENCE_CATEGORY_OCR);
             getPreferenceScreen().removePreference(ocrGroup);
         }
 
@@ -89,16 +68,16 @@ public class PreferencesActivity extends PreferenceActivity implements
                                           String key) {
         // Update preference summary values to show current preferences
         switch (key) {
-            case KEY_AUTO_FOCUS:
+            case Constant.KEY_AUTO_FOCUS:
                 autoFocus.setChecked(sharedPreferences.getBoolean(key, Constant.DEFAULT_TOGGLE_AUTO_FOCUS));
                 break;
-            case KEY_PLAY_BEEP:
+            case Constant.KEY_PLAY_BEEP:
                 beep.setChecked(sharedPreferences.getBoolean(key, Constant.DEFAULT_TOGGLE_BEEP));
                 break;
-            case KEY_TOGGLE_LIGHT:
+            case Constant.KEY_TOGGLE_LIGHT:
                 flashLight.setSummary(flashLight.getEntry());
                 break;
-            case KEY_OCR_ENGINE_MODE:
+            case Constant.KEY_OCR_ENGINE_MODE:
                 listPreferenceOcrEngineMode.setSummary(sharedPreferences.getString(key, Constant.DEFAULT_OCR_ENGINE_MODE));
 
         }

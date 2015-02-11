@@ -116,7 +116,7 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
      */
     void onShutterButtonPress() {
         Log.d(TAG, "onShutterButtonPress");
-        String torch = prefs.getString(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT);
+        String torch = prefs.getString(Constant.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT);
         cameraManager.setTorch(torch);
 
 //        handler.stop();
@@ -381,7 +381,7 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
         //get the mobile Pictures directory
         String storage_dir = getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER);
         if (storage_dir == null || storage_dir.equals("")) {
-            storage_dir = getSharedPreferences().getString(PreferencesActivity.KEY_STORAGE_DIR, "");
+            storage_dir = getSharedPreferences().getString(Constant.KEY_STORAGE_DIR, "");
         }
 
         File picDir = new File(storage_dir);

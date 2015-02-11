@@ -26,9 +26,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.SurfaceHolder;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.camera.AutoFocusManager;
 import com.stackbase.mobapp.camera.PlanarYUVLuminanceSource;
+import com.stackbase.mobapp.utils.Constant;
 
 import java.io.IOException;
 
@@ -100,7 +100,7 @@ public final class CameraManager {
     configManager.setDesiredCameraParameters(theCamera);
     
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    reverseImage = prefs.getBoolean(PreferencesActivity.KEY_REVERSE_IMAGE, false);
+    reverseImage = prefs.getBoolean(Constant.KEY_REVERSE_IMAGE, false);
   }
 
   /**

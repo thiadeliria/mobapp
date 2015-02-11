@@ -15,7 +15,6 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.activity.FinishListener;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
@@ -138,7 +137,7 @@ public class HomePage extends Activity implements Helper.ErrorCallback {
             PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
             int currentVersion = info.versionCode;
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            int lastVersion = prefs.getInt(PreferencesActivity.KEY_HELP_VERSION_SHOWN, 0);
+            int lastVersion = prefs.getInt(Constant.KEY_HELP_VERSION_SHOWN, 0);
             if (lastVersion == 0) {
                 isFirstLaunch = true;
             } else {
@@ -147,7 +146,7 @@ public class HomePage extends Activity implements Helper.ErrorCallback {
             if (currentVersion > lastVersion) {
 
                 // Record the last version for which we last displayed the What's New (Help) page
-                prefs.edit().putInt(PreferencesActivity.KEY_HELP_VERSION_SHOWN, currentVersion).commit();
+                prefs.edit().putInt(Constant.KEY_HELP_VERSION_SHOWN, currentVersion).commit();
 //                Intent intent = new Intent(this, HelpActivity.class);
 //                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 //
@@ -178,15 +177,19 @@ public class HomePage extends Activity implements Helper.ErrorCallback {
             file.mkdirs();
         }
         // Set storage dir
-        prefs.edit().putString(PreferencesActivity.KEY_STORAGE_DIR, default_storage).apply();
+        prefs.edit().putString(Constant.KEY_STORAGE_DIR, default_storage).apply();
         // Autofocus
-        prefs.edit().putBoolean(PreferencesActivity.KEY_AUTO_FOCUS, Constant.DEFAULT_TOGGLE_AUTO_FOCUS).apply();
+        prefs.edit().putBoolean(Constant.KEY_AUTO_FOCUS, Constant.DEFAULT_TOGGLE_AUTO_FOCUS).apply();
         // Beep
-        prefs.edit().putBoolean(PreferencesActivity.KEY_PLAY_BEEP, Constant.DEFAULT_TOGGLE_BEEP).apply();
+        prefs.edit().putBoolean(Constant.KEY_PLAY_BEEP, Constant.DEFAULT_TOGGLE_BEEP).apply();
         // Light
-        prefs.edit().putString(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT).apply();
+        prefs.edit().putString(Constant.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT).apply();
         // OCR engine
-        prefs.edit().putString(PreferencesActivity.KEY_OCR_ENGINE_MODE, Constant.DEFAULT_OCR_ENGINE_MODE).apply();
+        prefs.edit().putString(Constant.KEY_OCR_ENGINE_MODE, Constant.DEFAULT_OCR_ENGINE_MODE).apply();
+        // Message notify
+        prefs.edit().putBoolean(Constant.KEY_MESSAGE_NOTIFY, Constant.DEFAULT_MESSAGE_NOTIFY).apply();
+        // Message vibrate
+        prefs.edit().putBoolean(Constant.KEY_MESSAGE_VIBRATE, Constant.DEFAULT_MESSAGE_VIBRATE).apply();
     }
 
     @Override

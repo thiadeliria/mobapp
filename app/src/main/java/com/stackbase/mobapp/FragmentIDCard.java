@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.ocr.OCRActivity;
 import com.stackbase.mobapp.utils.Constant;
@@ -232,7 +231,7 @@ public class FragmentIDCard extends Fragment {
 
     private boolean saveIDInfo(Borrower borrower) {
         prefs = PreferenceManager.getDefaultSharedPreferences(content.getContext());
-        String rootDir = prefs.getString(PreferencesActivity.KEY_STORAGE_DIR,
+        String rootDir = prefs.getString(Constant.KEY_STORAGE_DIR,
                 Constant.DEFAULT_STORAGE_DIR);
         return Helper.saveBorrower(borrower, rootDir);
     }

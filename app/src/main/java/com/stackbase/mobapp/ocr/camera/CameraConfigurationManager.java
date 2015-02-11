@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.utils.Constant;
 
 import java.util.ArrayList;
@@ -94,8 +93,8 @@ final class CameraConfigurationManager {
 
     initializeTorch(parameters, prefs);
     String focusMode = null;
-    if (prefs.getBoolean(PreferencesActivity.KEY_AUTO_FOCUS, true)) {
-      if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_CONTINUOUS_FOCUS, false)) {
+    if (prefs.getBoolean(Constant.KEY_AUTO_FOCUS, true)) {
+      if (prefs.getBoolean(Constant.KEY_DISABLE_CONTINUOUS_FOCUS, false)) {
         focusMode = findSettableValue(parameters.getSupportedFocusModes(),
             Camera.Parameters.FOCUS_MODE_AUTO);
       } else {
@@ -134,7 +133,7 @@ final class CameraConfigurationManager {
     }
 
     private static void initializeTorch(Camera.Parameters parameters, SharedPreferences prefs) {
-        String currentSetting = prefs.getString(PreferencesActivity.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT);
+        String currentSetting = prefs.getString(Constant.KEY_TOGGLE_LIGHT, Constant.DEFAULT_TOGGLE_LIGHT);
         doSetTorch(parameters, currentSetting);
     }
 

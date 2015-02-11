@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.stackbase.mobapp.activity.PreferencesActivity;
 import com.stackbase.mobapp.activity.ThumbnailsActivity;
 import com.stackbase.mobapp.utils.Constant;
 import com.stackbase.mobapp.utils.Helper;
@@ -68,7 +67,7 @@ public class FragmentOtherInfo extends Fragment {
                 String parentFolder = Helper.getMD5String(name + id);
                 String subFolder = Helper.getMD5String(name + id + label);
                 prefs = PreferenceManager.getDefaultSharedPreferences(active);
-                String rootDir = prefs.getString(PreferencesActivity.KEY_STORAGE_DIR,
+                String rootDir = prefs.getString(Constant.KEY_STORAGE_DIR,
                         Constant.DEFAULT_STORAGE_DIR);
                 File imageFolder = new File(rootDir + File.separator + parentFolder
                         + File.separator + subFolder);

@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
-                android:text="账户"
+                android:text="@string/account_title"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -49,20 +49,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:text="账号" />
+                android:text="@string/account" />
             <TextView
                 android:id="@+id/account_id"
                 style="@style/SettingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/account"
+                android:layout_alignBottom="@id/account"
                 android:layout_alignParentRight="true"
-                android:text="user0213" />
+                android:text="default" />
             <ImageView
                 android:id="@+id/divider1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/account"
+                android:layout_below="@id/account"
                 android:layout_marginBottom="7dp"
                 android:background="@drawable/bgd_divider" />
             <TextView
@@ -70,60 +70,68 @@
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/divider1"
+                android:layout_below="@id/divider1"
                 android:layout_marginBottom="9dp"
-                android:text="更改密码" />
+                android:text="@string/change_password" />
             <ImageView
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/change_password"
+                android:layout_below="@id/change_password"
                 android:layout_marginBottom="7dp"
                 android:background="@drawable/bgd_divider" />
             <TextView
-                android:id="@+id/keep_logged_in"
+                android:id="@+id/keep_logged_in_text"
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/divider2"
+                android:layout_below="@id/divider2"
                 android:layout_marginBottom="9dp"
-                android:text="保持登录状态" />
+                android:text="@string/keep_logged_in" />
             <CheckBox
-                android:id="@+id/checkBox1"
+                android:id="@+id/keep_logged_in"
                 android:layout_width="wrap_content"
                 android:layout_height="29dp"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/keep_logged_in"
+                android:layout_alignTop="@id/keep_logged_in_text"
                 android:checked="true" />
             <ImageView
                 android:id="@+id/divider3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/keep_logged_in"
+                android:layout_below="@id/keep_logged_in_text"
                 android:layout_marginBottom="7dp"
                 android:background="@drawable/bgd_divider" />
             <TextView
-                android:id="@+id/add_phone"
+                android:id="@+id/connection_testing"
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/divider3"
                 android:layout_marginBottom="9dp"
-                android:text="连接服务器测试" />
+                android:text="@string/connection_testing" />
             <ImageView
                 android:id="@+id/divider0"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/add_phone"
+                android:layout_below="@id/connection_testing"
                 android:layout_marginBottom="7dp"
                 android:background="@drawable/bgd_divider" />
             <TextView
-                android:id="@+id/phone"
+                android:id="@+id/clean_data"
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/divider0"
-                android:text="清空数据" />
+                android:layout_below="@id/divider0"
+                android:text="@string/clean_data" />
+            <TextView
+                android:id="@+id/spaceUsage"
+                style="@style/SettingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/clean_data"
+                android:text="@string/calculate_usage" />
         </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
-                android:text="消息"
+                android:text="@string/message_title"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -159,40 +167,40 @@
             android:textColor="#f9f9f9"
             android:textSize="15sp" >
             <TextView
-                android:id="@+id/notify_me"
+                android:id="@+id/notify_me_text"
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:text="消息通知" />
+                android:text="@string/message_notify" />
             <CheckBox
-                android:id="@+id/checkBox2"
+                android:id="@+id/notify_me"
                 android:layout_width="wrap_content"
                 android:layout_height="29dp"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/notify_me"
+                android:layout_alignTop="@id/notify_me_text"
                 android:checked="true" />
             <ImageView
                 android:id="@+id/divider6"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/notify_me"
+                android:layout_below="@id/notify_me_text"
                 android:layout_marginBottom="7dp"
                 android:background="@drawable/bgd_divider" />
             <TextView
-                android:id="@+id/vibrate"
+                android:id="@+id/vibrate_text"
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/divider6"
                 android:layout_marginBottom="7dp"
-                android:text="振动" />
+                android:text="@string/message_vibrate" />
             <CheckBox
-                android:id="@+id/checkBox3"
+                android:id="@+id/vibrate"
                 android:layout_width="wrap_content"
                 android:layout_height="29dp"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/vibrate"
+                android:layout_alignTop="@id/vibrate_text"
                 android:checked="true" />
         </RelativeLayout>
         <LinearLayout
@@ -212,7 +220,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
-                android:text="关于"
+                android:text="@string/about_title"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -228,26 +236,26 @@
             android:textColor="#f9f9f9"
             android:textSize="15sp" >
             <TextView
-                android:id="@+id/about_us"
+                android:id="@+id/about_us_text"
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:text="关于翼龙贷" />
+                android:text="@string/about_app" />
             <Button
-                android:id="@+id/arrow"
+                android:id="@+id/about_us"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:background="@android:color/transparent"
-                android:text=">"
+                android:text="  >  "
                 android:textColor="#f9f9f9"
                 android:textStyle="bold" />
             <ImageView
                 android:id="@+id/divider8"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/about_us"
+                android:layout_below="@id/about_us_text"
                 android:layout_marginBottom="7dp"
                 android:background="@drawable/bgd_divider" />
             <TextView
@@ -255,9 +263,9 @@
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/divider8"
+                android:layout_below="@id/divider8"
                 android:layout_marginBottom="9dp"
-                android:text="退出" />
+                android:text="@string/exit" />
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>
