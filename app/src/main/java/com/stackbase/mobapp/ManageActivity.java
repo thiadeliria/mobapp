@@ -20,8 +20,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.stackbase.mobapp.objects.Borrower;
@@ -57,15 +59,19 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     private static final String MSG_KEY_PROGRESS = "MSG_KEY_PROGRESS";
     private static final String MSG_KEY_UPLOAD_RESULT = "MSG_KEY_UPLOAD_RESULT";
     private SharedPreferences prefs;
+    private ImageView messageUnread;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.borrower_list);
+        this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.borrower_list_title);
         prefs = PreferenceManager.getDefaultSharedPreferences(ManageActivity.this);
         data = new ArrayList<>();
         adapter = new SwipeListViewAdapter(this, data);
         adapter.setUpdateCallback(this);
+        messageUnread = (ImageView) findViewById(R.id.messageUnread);
         swipeListView = (SwipeListView) findViewById(R.id.swipe_list_view);
         swipeListView.setSwipeCloseAllItemsWhenMoveList(true);
 //        swipeListView.setAnimationTime(200);
@@ -298,6 +304,7 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         boolean msgNotify = prefs.getBoolean(Constant.KEY_MESSAGE_NOTIFY, Constant.DEFAULT_MESSAGE_NOTIFY);
         boolean msgVibrate = prefs.getBoolean(Constant.KEY_MESSAGE_VIBRATE, Constant.DEFAULT_MESSAGE_VIBRATE);
+        messageUnread.setVisibility(View.VISIBLE);
         if (msgNotify) {
             mBuilder.setContentTitle(getString(R.string.upload_title))
                     .setContentText(msg)

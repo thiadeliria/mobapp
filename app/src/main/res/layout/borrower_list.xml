@@ -20,6 +20,6 @@
         swipe:swipeCloseAllItemsWhenMoveList="true"
         swipe:swipeMode="left"
         android:listSelector="@drawable/grid_color_selector"
-        swipe:swipeOffsetLeft="50dip"
+        swipe:swipeOffsetLeft="160dp"
         />
 </LinearLayout>

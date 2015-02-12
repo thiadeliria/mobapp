@@ -111,7 +111,7 @@
                 android:layout_marginBottom="9dp"
                 android:text="@string/connection_testing" />
             <ImageView
-                android:id="@+id/divider0"
+                android:id="@+id/clean_data_view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/connection_testing"
@@ -122,7 +122,7 @@
                 style="@style/SettingLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/divider0"
+                android:layout_below="@id/clean_data_view"
                 android:text="@string/clean_data" />
             <TextView
                 android:id="@+id/spaceUsage"

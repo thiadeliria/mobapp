@@ -20,12 +20,9 @@ package com.stackbase.mobapp.view.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -89,8 +86,8 @@ public class SwipeListViewAdapter extends BaseAdapter {
             holder.uploadBtn = (Button) convertView.findViewById(R.id.uploadBorrowerBtn);
             holder.uploadPB = (ProgressBar) convertView.findViewById(R.id.uploadProgressBar);
             convertView.setTag(holder);
-            ViewTreeObserver vto = convertView.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener(new LayoutListener(convertView));
+//            ViewTreeObserver vto = convertView.getViewTreeObserver();
+//            vto.addOnGlobalLayoutListener(new LayoutListener(convertView));
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
@@ -129,25 +126,25 @@ public class SwipeListViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class LayoutListener implements OnGlobalLayoutListener {
-        View parentView;
-
-        public LayoutListener(View view) {
-            this.parentView = view;
-        }
-
-        @Override
-        public void onGlobalLayout() {
-            parentView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            Button delBtn = (Button) parentView.findViewById(R.id.delBorrowerBtn);
-            Button uploadBtn = (Button) parentView.findViewById(R.id.uploadBorrowerBtn);
-            float offset = delBtn.getMeasuredWidth() + uploadBtn.getMeasuredWidth();
-            Log.d(TAG, "onGlobalLayout: " + offset);
-            if (offset > 0) {
-                updateCallback.setSwipeOffset(offset);
-            }
-        }
-    }
+//    private class LayoutListener implements OnGlobalLayoutListener {
+//        View parentView;
+//
+//        public LayoutListener(View view) {
+//            this.parentView = view;
+//        }
+//
+//        @Override
+//        public void onGlobalLayout() {
+//            parentView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//            Button delBtn = (Button) parentView.findViewById(R.id.delBorrowerBtn);
+//            Button uploadBtn = (Button) parentView.findViewById(R.id.uploadBorrowerBtn);
+//            float offset = delBtn.getMeasuredWidth() + uploadBtn.getMeasuredWidth();
+//            Log.d(TAG, "onGlobalLayout: " + offset);
+//            if (offset > 0) {
+//                updateCallback.setSwipeOffset(offset);
+//            }
+//        }
+//    }
 
     public static class ViewHolder {
         ImageView ivImage;

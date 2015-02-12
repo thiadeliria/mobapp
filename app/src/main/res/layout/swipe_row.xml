@@ -22,7 +22,7 @@
     >
     <LinearLayout
         android:id="@+id/back"
-        android:tag="front"
+        android:tag="back"
         style="@style/ListBackContent"
         >
         <Button
@@ -30,13 +30,17 @@
             android:layout_height="fill_parent"
             android:id="@+id/delBorrowerBtn"
             style="@style/ListButtonAction"
+            android:textColor="@color/white"
+            android:background="@android:color/holo_red_dark"
             android:text="@string/delete"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:id="@+id/uploadBorrowerBtn"
             style="@style/ListButtonAction"
-            android:text="@string/upload"/>
+            android:text="@string/upload"
+            android:background="@drawable/background_item"
+            />
     </LinearLayout>
     <RelativeLayout
         android:id="@+id/front"
