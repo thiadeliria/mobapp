@@ -212,7 +212,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:paddingRight="5dp"
-                android:src="@drawable/ic_id_front" />
+                android:src="@drawable/img_id_front" />
             <ImageView
                 android:id="@+id/backView"
                 android:layout_width="wrap_content"
@@ -220,7 +220,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:paddingLeft="5dp"
-                android:src="@drawable/ic_id_back" />
+                android:src="@drawable/img_id_back" />
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

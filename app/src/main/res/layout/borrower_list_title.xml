@@ -1,43 +1,46 @@
-<RelativeLayout xmlns:android=
-    "http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="40dp"
-    android:orientation="horizontal" android:paddingLeft="5dp"
-    >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:paddingLeft="5dp" >
+
     <FrameLayout
-        android:layout_alignParentRight="true"
-        android:background="@null"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        >
+        android:layout_alignParentRight="true"
+        android:background="@null" >
+
         <LinearLayout
-            android:gravity="top|right|center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:gravity="top|right|center" >
+
             <ImageView
                 android:id="@+id/show_messages"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
                 android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_marginRight="10dp"
                 android:clickable="true"
-                android:src="@android:drawable/sym_action_email" />
+                android:gravity="center"
+                android:src="@drawable/ic_action_email" />
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="top|right|center"
-            android:layout_marginTop="5dp"
-            android:paddingRight="10dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:gravity="top|right|center"
+            android:paddingRight="10dp" >
+
             <ImageView
-                android:gravity="center"
                 android:id="@+id/messageUnread"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/presence_online"
-                />
+                android:gravity="center"
+                android:src="@drawable/ic_red_dot"
+                android:visibility="gone" />
         </LinearLayout>
     </FrameLayout>
+
 </RelativeLayout>
