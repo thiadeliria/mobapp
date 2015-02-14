@@ -1,10 +1,12 @@
 package com.stackbase.mobapp.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -24,13 +26,12 @@ import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.camera.BeepManager;
 import com.stackbase.mobapp.camera.CameraManager;
 import com.stackbase.mobapp.utils.Constant;
+import com.stackbase.mobapp.utils.GPSLocationTracker;
 import com.stackbase.mobapp.utils.Helper;
 import com.stackbase.mobapp.view.ShutterButton;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * This activity opens the camera and does the actual scanning on a background thread. It draws a
@@ -42,9 +43,9 @@ import java.util.Date;
 public final class CameraActivity extends Activity implements SurfaceHolder.Callback,
         ShutterButton.OnShutterButtonListener, Camera.PictureCallback {
 
+    private static Location currentBestLocation = null;
+
     private static final String TAG = CameraActivity.class.getSimpleName();
-    // Context menu
-    private static final int SETTINGS_ID = Menu.FIRST;
 
     private CameraManager cameraManager;
     private CameraActivityHandler handler;
@@ -56,8 +57,10 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
     private ShutterButton shutterButton;
     private SharedPreferences prefs;
     private boolean isPaused;
-    private OnSharedPreferenceChangeListener listener;
     private FinishListener finishListener;
+    private static GPSLocationTracker gpsLocation;
+    private static GPSLocationTracker networkLocation;
+    private LocationManager locationManager;
 
     public FinishListener getFinishListener() {
         return finishListener;
@@ -65,6 +68,14 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
 
     public SharedPreferences getSharedPreferences() {
         return prefs;
+    }
+
+    public static GPSLocationTracker getGpsLocation() {
+        return gpsLocation;
+    }
+
+    public static GPSLocationTracker getNetworkLocation() {
+        return networkLocation;
     }
 
     @Override
@@ -93,6 +104,9 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
 
         finishListener = new FinishListener(this);
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        gpsLocation = new GPSLocationTracker(this);
+        networkLocation = new GPSLocationTracker(this);
     }
 
     @Override
@@ -109,6 +123,12 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
             surfaceHolder.addCallback(this);
             surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         }
+
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 5000, 10, gpsLocation);
+        locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 5000, 10, networkLocation);
+
     }
 
     /**
@@ -193,6 +213,9 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        locationManager.removeUpdates(gpsLocation);
+        locationManager.removeUpdates(networkLocation);
 //        if (baseApi != null) {
 //            baseApi.end();
 //        }
@@ -376,35 +399,5 @@ public final class CameraActivity extends Activity implements SurfaceHolder.Call
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    private File getOutputMediaFile() {
-        //get the mobile Pictures directory
-        String storage_dir = getIntent().getStringExtra(Constant.INTENT_KEY_PIC_FOLDER);
-        if (storage_dir == null || storage_dir.equals("")) {
-            storage_dir = getSharedPreferences().getString(Constant.KEY_STORAGE_DIR, "");
-        }
-
-        File picDir = new File(storage_dir);
-        //get the current time
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        return new File(picDir.getAbsolutePath() + File.separator + "IMAGE_" + timeStamp + ".jpg");
-    }
-
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.recaptureTextView:
-//                resumeContinuousCapture();
-//                break;
-//            case R.id.savePictureTextView:
-//                String fileName = savePictureFromView();
-//                Intent intent = new Intent();
-//                intent.putExtra(Constant.INTENT_KEY_PIC_FULLNAME, fileName);
-//                this.setResult(Activity.RESULT_OK, intent);
-//                finish();
-//                break;
-//        }
-//    }
 }
 

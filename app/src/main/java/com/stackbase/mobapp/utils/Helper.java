@@ -276,7 +276,7 @@ abstract public class Helper {
 
     private static boolean isPlainText(String fileFullName) {
         boolean isPlainText = false;
-        if (fileFullName.endsWith(".json")) {
+        if (fileFullName.endsWith(".json") || fileFullName.endsWith(".gs")) {
             isPlainText = true;
         }
         return isPlainText;
@@ -303,6 +303,11 @@ abstract public class Helper {
             Log.d(TAG, "Fail to save id file " + ex.getMessage());
         }
         return result;
+    }
+
+    public static String getGPSFileName(String pictureFileName) {
+        String gpsFileName = pictureFileName.substring(0, pictureFileName.length() - ".jpg".length()) + ".gs";
+        return gpsFileName;
     }
 
     public static ArrayList<Borrower> loadBorrowersInfo(String rootDir) {

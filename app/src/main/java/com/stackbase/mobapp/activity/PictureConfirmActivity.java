@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -16,12 +17,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.stackbase.mobapp.R;
+import com.stackbase.mobapp.objects.GPSLocation;
 import com.stackbase.mobapp.utils.Constant;
+import com.stackbase.mobapp.utils.GPSLocationTracker;
 import com.stackbase.mobapp.utils.Helper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -105,7 +109,19 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
             } catch (IOException e) {
                 Log.e(TAG, "Fail to close stream.", e);
             }
-
+            Location location = CameraActivity.getGpsLocation().getLastBestLocation();
+            Location bestLocation = CameraActivity.getNetworkLocation().getLastBestLocation();
+            if (GPSLocationTracker.isBetterLocation(location, bestLocation)) {
+                bestLocation = location;
+            }
+            Log.d(TAG, "location: " + bestLocation);
+            GPSLocation gpsObj = new GPSLocation(bestLocation);
+            String gpsFileName = Helper.getGPSFileName(fileName);
+            try {
+                Helper.saveFile(gpsFileName, gpsObj.toJson().toString().getBytes("UTF-8"));
+            } catch (UnsupportedEncodingException ue) {
+                Log.e(TAG, "Fail to save GPS location", ue);
+            }
         }
         return fileName;
     }
