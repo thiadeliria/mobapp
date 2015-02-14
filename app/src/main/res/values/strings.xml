@@ -34,7 +34,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="delete">删除</string>
     <string name="upload">上传</string>
-    <string name="loading">载入…</string>
+    <string name="loading">载入...</string>
     <string name="title_activity_picture_confirm">PictureConfirmActivity</string>
     <string name="err_nosd">没有检测到存储卡, 请确认存储卡已经正确安装.</string>
     <string name="err_title">错误</string>
@@ -43,6 +43,7 @@
     <string name="upload_fail">上传借款人‘%s’信息失败,请重试或检查服务器连接是否正常.</string>
     <string name="upload_notify">上传借款人信息通知</string>
     <string name="upload_title">翼龙贷-借款人管理</string>
+    <string name="err_gps_location">获取GPS信息失败！</string>
 
     <!-- settings -->
     <string name="account_title">账户</string>
@@ -51,7 +52,7 @@
     <string name="connection_testing">服务连接器测试</string>
     <string name="keep_logged_in">保持登录状态</string>
     <string name="clean_data">清空数据</string>
-    <string name="calculate_usage">正在计算…</string>
+    <string name="calculate_usage">正在计算...</string>
     <string name="message_title">消息</string>
     <string name="message_notify">消息通知</string>
     <string name="message_vibrate">振动</string>

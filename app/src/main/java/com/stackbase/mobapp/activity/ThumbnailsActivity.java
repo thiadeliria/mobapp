@@ -131,6 +131,9 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
                                 Thumbnail thumbnail = (Thumbnail) gridView.getItemAtPosition(position);
                                 File file = new File(thumbnail.getPictureName());
                                 file.delete();
+                                String gpsFileName = Helper.getGPSFileName(thumbnail.getPictureName());
+                                file = new File(gpsFileName);
+                                file.delete();
                                 deleteItem(thumbnail.getPictureName());
                                 customGridAdapter.remove(thumbnail);
                                 customGridAdapter.notifyDataSetChanged();

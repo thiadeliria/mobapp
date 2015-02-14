@@ -115,6 +115,10 @@ public class PictureConfirmActivity extends Activity implements View.OnClickList
                 bestLocation = location;
             }
             Log.d(TAG, "location: " + bestLocation);
+            if (location == null) {
+                //TODO: show this message in the message center.
+                Helper.mMakeTextToast(this, getString(R.string.err_gps_location), true);
+            }
             GPSLocation gpsObj = new GPSLocation(bestLocation);
             String gpsFileName = Helper.getGPSFileName(fileName);
             try {
