@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.stackbase.mobapp.activity.MessageCenterActivity;
 import com.stackbase.mobapp.objects.Borrower;
 import com.stackbase.mobapp.utils.BitmapUtilities;
 import com.stackbase.mobapp.utils.Constant;
@@ -43,7 +44,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class ManageActivity extends Activity implements IUpdateCallback {
+public class ManageActivity extends Activity implements IUpdateCallback, View.OnClickListener {
     private static final String TAG = ManageActivity.class.getSimpleName();
 
     private static final int REQUEST_CODE_SETTINGS = 0;
@@ -60,6 +61,7 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     private static final String MSG_KEY_UPLOAD_RESULT = "MSG_KEY_UPLOAD_RESULT";
     private SharedPreferences prefs;
     private ImageView messageUnread;
+    private ImageView showMessages;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,9 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         data = new ArrayList<>();
         adapter = new SwipeListViewAdapter(this, data);
         adapter.setUpdateCallback(this);
-        messageUnread = (ImageView) findViewById(R.id.messageUnread);
+        messageUnread = (ImageView) findViewById(R.id.message_unread);
+        showMessages = (ImageView) findViewById(R.id.show_messages);
+        showMessages.setOnClickListener(this);
         swipeListView = (SwipeListView) findViewById(R.id.swipe_list_view);
         swipeListView.setSwipeCloseAllItemsWhenMoveList(true);
 //        swipeListView.setAnimationTime(200);
@@ -278,6 +282,19 @@ public class ManageActivity extends Activity implements IUpdateCallback {
     }
 
     @Override
+    protected void onResume() {
+        if (messageUnread != null) {
+            String rootDir = prefs.getString(Constant.KEY_STORAGE_DIR, Constant.DEFAULT_STORAGE_DIR);
+            if (Helper.hasNewMessages(rootDir)) {
+                messageUnread.setVisibility(View.VISIBLE);
+            } else {
+                messageUnread.setVisibility(View.GONE);
+            }
+        }
+        super.onResume();
+    }
+
+    @Override
     public void startProgress(SwipeListViewItem item) {
         swipeListView.closeAnimate(data.indexOf(item));
         UploadBorrowerInfo task = new UploadBorrowerInfo(item, new MessageHandler());
@@ -305,6 +322,13 @@ public class ManageActivity extends Activity implements IUpdateCallback {
         boolean msgNotify = prefs.getBoolean(Constant.KEY_MESSAGE_NOTIFY, Constant.DEFAULT_MESSAGE_NOTIFY);
         boolean msgVibrate = prefs.getBoolean(Constant.KEY_MESSAGE_VIBRATE, Constant.DEFAULT_MESSAGE_VIBRATE);
         messageUnread.setVisibility(View.VISIBLE);
+        com.stackbase.mobapp.objects.Message message = new com.stackbase.mobapp.objects.Message();
+        message.setRead(false);
+        message.setMessageType(com.stackbase.mobapp.objects.Message.MessageType.USER_MESSAGE.toString());
+        message.setContent(msg);
+        message.setTime(System.currentTimeMillis());
+        String rootDir = prefs.getString(Constant.KEY_STORAGE_DIR, Constant.DEFAULT_STORAGE_DIR);
+        Helper.saveMessage(message, rootDir);
         if (msgNotify) {
             mBuilder.setContentTitle(getString(R.string.upload_title))
                     .setContentText(msg)
@@ -321,6 +345,14 @@ public class ManageActivity extends Activity implements IUpdateCallback {
             notificationManager.notify(notifyId, mBuilder.build());
         } else {
             Helper.mMakeTextToast(this, msg, true);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == showMessages) {
+            Intent intent = new Intent(this, MessageCenterActivity.class);
+            startActivity(intent);
         }
     }
 

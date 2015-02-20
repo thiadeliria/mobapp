@@ -118,7 +118,8 @@ public class ThumbnailsActivity extends Activity implements AbsListView.OnScroll
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                Helper.showErrorMessage(ThumbnailsActivity.this, "警告", "确定要删除这张图片吗？",
+                Helper.showErrorMessage(ThumbnailsActivity.this, getString(R.string.confirm),
+                        getString(R.string.confirm_del),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

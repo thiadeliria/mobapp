@@ -10,7 +10,7 @@ android {
     }
 
     signingConfigs {
-        mobappRelease{
+        mobappRelease {
             storeFile file("eloancn.jks")
             storePassword "stackbase_eloancn"
             keyAlias "stackbase"
@@ -22,7 +22,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig  signingConfigs.mobappRelease
+            signingConfig signingConfigs.mobappRelease
 
         }
     }
@@ -30,11 +30,12 @@ android {
 
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
     compile fileTree(dir: '../libs', include: '*.jar')
-    compile 'org.xeustechnologies:jtar:1.1'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile('com.googlecode.json-simple:json-simple:1.1.1') {
         exclude module: "hamcrest-core"
     }
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'org.xeustechnologies:jtar:1.1'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.android.support:support-v13:21.0.3'
 }

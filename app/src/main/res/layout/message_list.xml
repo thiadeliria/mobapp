@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bgd_gradient_red"
+    android:orientation="vertical"
+    tools:context="com.stackbase.mobapp.activity.MessageCenterActivity"
+    >
+    <com.stackbase.mobapp.view.swipelistview.SwipeListView
+        xmlns:swipe="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/swipe_list_view"
+        android:choiceMode="singleChoice"
+        android:dividerHeight="1dp"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        swipe:swipeFrontView="@+id/front"
+        swipe:swipeBackView="@+id/back"
+        swipe:swipeDrawableChecked="@drawable/choice_selected"
+        swipe:swipeDrawableUnchecked="@drawable/choice_unselected"
+        swipe:swipeCloseAllItemsWhenMoveList="true"
+        swipe:swipeMode="left"
+        android:listSelector="@drawable/grid_color_selector"
+        swipe:swipeOffsetLeft="80dp"
+        />
+</LinearLayout>

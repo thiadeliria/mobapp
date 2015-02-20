@@ -9,18 +9,24 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.stackbase.mobapp.R;
 import com.stackbase.mobapp.objects.Borrower;
+import com.stackbase.mobapp.objects.Message;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -32,6 +38,7 @@ abstract public class Helper {
     private static final String TAG = Helper.class.getSimpleName();
 
     private static final String BORROWER_FILE_NAME = "id.json";
+    private static final String MESSAGE_FILE_EXTENSION = ".msg";
 
     /**
      * Displays an error message dialog box to the user on the UI thread.
@@ -66,7 +73,7 @@ abstract public class Helper {
         } catch (RuntimeException e) {
             Log.e(TAG, "Is the SD card visible?", e);
             if (callback != null) {
-                callback.onErrorTaken("错误", "需要的外部存储(例如: SD卡)不可用.");
+                callback.onErrorTaken(context.getString(R.string.err_title), context.getString(R.string.sd_unavailable));
             }
         }
 
@@ -82,7 +89,8 @@ abstract public class Helper {
                 // We get an error here if the SD card is visible, but full
                 Log.e(TAG, "External storage is unavailable");
                 if (callback != null) {
-                    callback.onErrorTaken("错误", "需要的外部存储(例如: SD卡)不可用或者已经没有可用空间.");
+                    callback.onErrorTaken(context.getString(R.string.err_title),
+                            context.getString(R.string.sd_no_space));
                 }
             }
 
@@ -98,14 +106,16 @@ abstract public class Helper {
             // We can only read the media
             Log.e(TAG, "External storage is read-only");
             if (callback != null) {
-                callback.onErrorTaken("错误", "需要的外部存储(例如: SD卡)是只读的, 无法存储数据.");
+                callback.onErrorTaken(context.getString(R.string.err_title),
+                        context.getString(R.string.sd_readonly));
             }
         } else {
             // Something else is wrong. It may be one of many other states, but all we need
             // to know is we can neither read nor write
             Log.e(TAG, "External storage is unavailable");
             if (callback != null) {
-                callback.onErrorTaken("错误", "需要的外部存储(例如: SD卡)不可用或者已经损坏.");
+                callback.onErrorTaken(context.getString(R.string.err_title),
+                        context.getString(R.string.sd_damage));
             }
         }
         return null;
@@ -351,5 +361,71 @@ abstract public class Helper {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public static boolean saveMessage(Message message, String rootDir) {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = rootDir + File.separator + Constant.DEFAULT_MESSAGE_DIR + File.separator + timeStamp + MESSAGE_FILE_EXTENSION;
+        message.setJsonFile(fileName);
+        boolean result = false;
+        try {
+            result = Helper.saveFile(fileName, message.toJson().toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            Log.e(TAG, "Fail to save message file", ex);
+        }
+        return result;
+    }
+
+    public static boolean hasNewMessages(String rootDir) {
+        String messageDir = rootDir + File.separator + Constant.DEFAULT_MESSAGE_DIR;
+        pullMessagesFromServer();
+        File file = new File(messageDir);
+        if (file.exists()) {
+            File[] msgs = file.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    if (filename.endsWith(MESSAGE_FILE_EXTENSION)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
+            for (File msgFile : msgs) {
+                Message message = new Message(msgFile.getAbsolutePath());
+                if (!message.isRead()) return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<Message> pullMessagesFromServer() {
+        // TODO: pull messages from remote server and save to local
+        return new ArrayList<>();
+    }
+
+    public static List<Message> getMessages(String rootDir) {
+        String messageDir = rootDir + File.separator + Constant.DEFAULT_MESSAGE_DIR;
+        pullMessagesFromServer();
+        List<Message> messages = new ArrayList<>();
+        File file = new File(messageDir);
+        if (file.exists()) {
+            for (File msgFile : file.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    if (filename.endsWith(MESSAGE_FILE_EXTENSION)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            })) {
+                Message message = new Message(msgFile.getAbsolutePath());
+                messages.add(message);
+            }
+        } else {
+            file.mkdirs();
+        }
+        return messages;
     }
 }
