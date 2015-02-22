@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 abstract public class JSONObj implements Serializable {
@@ -24,21 +25,45 @@ abstract public class JSONObj implements Serializable {
         Method[] methods = this.getClass().getDeclaredMethods();
         for (Method method : methods) {
             if (method.getName().startsWith("get")) {
-                try {
-                    String fieldName = method.getName().substring(3, 4).toLowerCase()
-                            + method.getName().substring(4);
-                    Field field = this.getClass().getDeclaredField(fieldName);
-                    jsonObject.put(field.getName(), method.invoke(this));
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                String name = getFieldName(method, "get");
+                if (name != null) {
+                    try {
+                        jsonObject.put(name, method.invoke(this));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (method.getName().startsWith("is") && method.getReturnType() == Boolean.class) {
+                String name = getFieldName(method, "is");
+                if (name != null) {
+                    try {
+                        jsonObject.put(name, method.invoke(this));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
         return jsonObject;
     }
 
+    private String getFieldName(Method method, String methodPrefix) {
+        try {
+            int length = methodPrefix.length();
+            String fieldName = method.getName().substring(length, length + 1).toLowerCase()
+                    + method.getName().substring(length + 1);
+            Field field = this.getClass().getDeclaredField(fieldName);
+            return field.getName();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
     public void fromJSON(String jsonFile) {
         JSONParser parser = new JSONParser();
         BufferedReader bfReader = null;

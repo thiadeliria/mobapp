@@ -42,6 +42,11 @@ abstract public class Constant {
     public static final String DEFAULT_STORAGE_DIR = "stackbase/mobapp/";
 
     /**
+     * The default subdir to save pictures and data
+     */
+    public static final String DEFAULT_MESSAGE_DIR = "messages";
+
+    /**
      * Whether to send notification after upload finish
      */
     public static final boolean DEFAULT_MESSAGE_NOTIFY = true;

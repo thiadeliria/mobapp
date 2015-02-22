@@ -23,7 +23,6 @@
     <string name="camera_flash_auto">自动</string>
     <string name="camera_flash_open">开</string>
     <string name="camera_flash_close">关</string>
-
     <string name="album_folder_tag">album_folder_name</string>
     <string name="title_activity_capture">CaptureActivity</string>
     <string name="storage_dir">存储路径</string>
@@ -34,15 +33,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="delete">删除</string>
     <string name="upload">上传</string>
-    <string name="loading">载入…</string>
+    <string name="loading">载入...</string>
     <string name="title_activity_picture_confirm">PictureConfirmActivity</string>
     <string name="err_nosd">没有检测到存储卡, 请确认存储卡已经正确安装.</string>
-    <string name="err_title">错误</string>
     <string name="err_id_needed">必须输入姓名和身份证号码.</string>
     <string name="upload_finished">借款人‘%s’信息上传完毕.</string>
     <string name="upload_fail">上传借款人‘%s’信息失败,请重试或检查服务器连接是否正常.</string>
     <string name="upload_notify">上传借款人信息通知</string>
     <string name="upload_title">翼龙贷-借款人管理</string>
+    <string name="err_gps_location">获取GPS信息失败！</string>
 
     <!-- settings -->
     <string name="account_title">账户</string>
@@ -51,11 +50,28 @@
     <string name="connection_testing">服务连接器测试</string>
     <string name="keep_logged_in">保持登录状态</string>
     <string name="clean_data">清空数据</string>
-    <string name="calculate_usage">正在计算…</string>
+    <string name="calculate_usage">正在计算...</string>
     <string name="message_title">消息</string>
     <string name="message_notify">消息通知</string>
     <string name="message_vibrate">振动</string>
     <string name="about_title">关于</string>
     <string name="about_app">关于翼龙贷</string>
     <string name="exit">退出</string>
+
+    <!-- message center -->
+    <string name="select_all">全选</string>
+    <string name="delete_all">清空</string>
+    <string name="user_message">用户消息</string>
+    <string name="system_message">系统消息</string>
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+
+    <!-- prompt -->
+    <string name="confirm">确认</string>
+    <string name="err_title">错误</string>
+    <string name="confirm_del">确定要删除这张图片吗？</string>
+    <string name="sd_unavailable">需要的外部存储(例如: SD卡)不可用.</string>
+    <string name="sd_no_space">需要的外部存储(例如: SD卡)不可用或者已经没有可用空间.</string>
+    <string name="sd_readonly">需要的外部存储(例如: SD卡)是只读的, 无法存储数据.</string>
+    <string name="sd_damage">需要的外部存储(例如: SD卡)不可用或者已经损坏.</string>
 </resources>
